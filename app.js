@@ -1,47 +1,32 @@
 // Default Game and Anime data templates
 const defaultGames = [
-    { id: "g1", title: "Minecraft", category: "games", rating: 5, month: "January", year: 2024, image: "", notes: "Started playing via TLauncher right after setting up the laptop!" },
-    { id: "g2", title: "Valorant", category: "games", rating: 4, month: "February", year: 2024, image: "", notes: "Competitive FPS benders with friends." },
-    { id: "g3", title: "Hitman (2016)", category: "games", rating: 5, month: "June", year: 2024, image: "", notes: "Agent 47 stealth missions." },
-    { id: "g4", title: "Assassin's Creed Rogue", category: "games", rating: 4, month: "June", year: 2024, image: "", notes: "Playing as Shay Cormac, hunting Assassins." },
-    { id: "g5", title: "Far Cry 3", category: "games", rating: 5, month: "July", year: 2024, image: "", notes: "Defeating Vaas Montenegro in the Rook Islands." },
-    { id: "g6", title: "Assassin's Creed IV: Black Flag", category: "games", rating: 5, month: "July", year: 2024, image: "", notes: "Sailing the Jackdaw across the Caribbean." },
-    { id: "g7", title: "Assassin's Creed Brotherhood", category: "games", rating: 5, month: "July", year: 2024, image: "", notes: "Rebuilding Rome and recruiting recruits." },
-    { id: "g8", title: "Call of Duty: Black Ops", category: "games", rating: 5, month: "November", year: 2024, image: "", notes: "The numbers Mason, what do they mean!" },
-    { id: "g9", title: "God of War", category: "games", rating: 5, month: "November", year: 2024, image: "", notes: "Kratos and Atreus in Midgard." },
-    { id: "g10", title: "Detroit: Become Human", category: "games", rating: 5, month: "December", year: 2024, image: "", notes: "Interactive masterclass with Connor, Kara, and Markus." },
-    { id: "g11", title: "Resident Evil 2 (Remake)", category: "games", rating: 5, month: "February", year: 2025, image: "", notes: "Survival horror in Raccoon City Police Station." },
-    { id: "g12", title: "Hitman Series", category: "games", rating: 5, month: "March", year: 2025, image: "", notes: "Deep dive into stealth contracts." },
-    { id: "g13", title: "Call of Duty: Modern Warfare 3", category: "games", rating: 4, month: "April", year: 2025, image: "", notes: "Campaign revision." },
-    { id: "g14", title: "Ghostrunner 2", category: "games", rating: 4, month: "April", year: 2025, image: "", notes: "Fast-paced cyberpunk slasher." },
-    { id: "g15", title: "Phasmophobia", category: "games", rating: 4, month: "July", year: 2025, image: "", notes: "Ghost hunting in the dark with friends." },
-    { id: "g16", title: "Devour", category: "games", rating: 4, month: "July", year: 2025, image: "", notes: "Co-op horror ritual interruptions." },
-    { id: "g17", title: "Uncharted: Legacy of Thieves Collection", category: "games", rating: 5, month: "August", year: 2025, image: "", notes: "Nathan Drake's last treasure hunt." },
-    { id: "g18", title: "Rise of the Tomb Raider", category: "games", rating: 4, month: "September", year: 2025, image: "", notes: "Lara Croft searching for the Divine Source." },
-    { id: "g19", title: "Grand Theft Auto IV", category: "games", rating: 5, month: "October", year: 2025, image: "", notes: "Niko Bellic chasing the American Dream." },
-    { id: "g20", title: "RV There Yet?", category: "games", rating: 3, month: "November", year: 2025, image: "", notes: "Co-op driving shenanigans." },
-    { id: "g21", title: "Batman: Arkham City", category: "games", rating: 5, month: "November", year: 2025, image: "", notes: "Hugo Strange, Joker, and Gotham's super-prison." },
-    { id: "g22", title: "Batman: Arkham Knight", category: "games", rating: 5, month: "November", year: 2025, image: "", notes: "Driving the Batmobile in Gotham." },
-    { id: "g23", title: "Marvel's Guardians of the Galaxy", category: "games", rating: 5, month: "November", year: 2025, image: "", notes: "Incredible story and banter with Star-Lord and crew." },
-    { id: "g24", title: "Call of Duty: Black Ops II", category: "games", rating: 5, month: "December", year: 2025, image: "", notes: "Futuristic battles with Raul Menendez." },
-    { id: "g25", title: "Need for Speed: Most Wanted", category: "games", rating: 5, month: "December", year: 2025, image: "", notes: "Revisiting the classic Black Edition." },
-    { id: "g26", title: "Symphony of the Serpent", category: "games", rating: 4, month: "December", year: 2025, image: "", notes: "Discovered during winter gaming sessions." },
-    { id: "g27", title: "Hogwarts Legacy", category: "games", rating: 5, month: "December", year: 2025, image: "", notes: "Exploring Hogwarts and casting spells." },
-    { id: "g28", title: "Schedule I", category: "games", rating: 4, month: "January", year: 2026, image: "", notes: "Simulation drug-manufacturing mechanics." },
-    { id: "g29", title: "College Kings", category: "games", rating: 4, month: "February", year: 2026, image: "", notes: "Visual novel gameplay choices." },
-    { id: "g30", title: "Enshrouded", category: "games", rating: 4, month: "February", year: 2026, image: "", notes: "Co-op survival action RPG." },
-    { id: "g31", title: "Lethal Company", category: "games", rating: 5, month: "February", year: 2026, image: "", notes: "Hilarious scrap hunting runs with friends." },
-    { id: "g32", title: "Raft", category: "games", rating: 4, month: "February", year: 2026, image: "", notes: "Building a grand floating home on the sea." },
-    { id: "g33", title: "Shadow of the Tomb Raider", category: "games", rating: 5, month: "February", year: 2026, image: "", notes: "Lara Croft preventing a Mayan apocalypse." },
-    { id: "g34", title: "Red Dead Redemption 2", category: "games", rating: 5, month: "February", year: 2026, image: "", notes: "Arthur Morgan and the Van der Linde gang." },
-    { id: "g35", title: "Welcome to Dustown", category: "games", rating: 4, month: "April", year: 2026, image: "", notes: "Atmospheric exploration logs." },
-    { id: "g36", title: "Demonologist", category: "games", rating: 4, month: "April", year: 2026, image: "", notes: "Terrifying ghost exorcisms in Unreal Engine." },
-    { id: "g37", title: "Summer's Gone: Season 1", category: "games", rating: 4, month: "May", year: 2026, image: "", notes: "Engaging choices visual novel." },
-    { id: "g38", title: "Human: Fall Flat", category: "games", rating: 4, month: "June", year: 2026, image: "", notes: "Clumsy physics puzzles." },
-    { id: "g39", title: "Lust Theory: Season 1", category: "games", rating: 4, month: "June", year: 2026, image: "", notes: "Visual novel story arcs." },
-    { id: "g40", title: "Watch Dogs", category: "games", rating: 5, month: "July", year: 2026, image: "", notes: "Aiden Pearce hacking Chicago." },
-    { id: "g41", title: "Tekken 3", category: "games", rating: 5, month: "July", year: 2026, image: "", notes: "Emulating the PS1 classic fight game via RetroArch." },
-    { id: "g42", title: "Watch Dogs 2", category: "games", rating: 5, month: "July", year: 2026, image: "", notes: "Marcus Holloway hacking San Francisco." }
+    { id: "g1", title: "Minecraft", category: "games", rating: 5, month: "January", year: 2024, image: "", notes: "Fascinating block building. Started playing via TLauncher." },
+    { id: "g2", title: "Valorant", category: "games", rating: 4, month: "February", year: 2024, image: "", notes: "Intense tactical shooter sessions with the squad." },
+    { id: "g3", title: "Hitman (2016)", category: "games", rating: 5, month: "June", year: 2024, image: "", notes: "Sleek assassination contracts in Paris, Sapienza, and Hokkaido." },
+    { id: "g4", title: "Assassin's Creed IV: Black Flag", category: "games", rating: 5, month: "June", year: 2024, image: "", notes: "Edward Kenway's journey. Sailing and singing sea shanties." },
+    { id: "g5", title: "Assassin's Creed Rogue", category: "games", rating: 4, month: "July", year: 2024, image: "", notes: "Playing as a Templar hunting down my former brothers." },
+    { id: "g6", title: "Assassin's Creed Brotherhood", category: "games", rating: 5, month: "July", year: 2024, image: "", notes: "Ezio Auditore leading the brotherhood in Rome." },
+    { id: "g7", title: "Call of Duty: Modern Warfare 1", category: "games", rating: 5, month: "August", year: 2024, image: "", notes: "Soap and Captain Price in a legendary modern campaign." },
+    { id: "g8", title: "Call of Duty: Modern Warfare 2 Remastered", category: "games", rating: 5, month: "September", year: 2024, image: "", notes: "Cliffhanger, Soap, and Ghost. Best remaster ever." },
+    { id: "g9", title: "God of War", category: "games", rating: 5, month: "November", year: 2024, image: "", notes: "An emotional journey of Kratos and Atreus in Norse mythology." },
+    { id: "g10", title: "Detroit: Become Human", category: "games", rating: 5, month: "December", year: 2024, image: "", notes: "Interactive narrative that is incredibly visual and emotional." },
+    { id: "g11", title: "Call of Duty: Modern Warfare 3", category: "games", rating: 4, month: "April", year: 2025, image: "", notes: "Soap's final stand and the conclusion of the trilogy." },
+    { id: "g12", title: "Tomb Raider: Definitive Edition", category: "games", rating: 4, month: "May", year: 2025, image: "", notes: "Lara Croft's origins. Surviving Yamatai island." },
+    { id: "g13", title: "Grand Theft Auto III (GTA 3)", category: "games", rating: 4, month: "June", year: 2025, image: "", notes: "Classic 3D Liberty City open world." },
+    { id: "g14", title: "Hitman 2", category: "games", rating: 5, month: "June", year: 2025, image: "", notes: "Amazing levels like Miami and Mumbai. Brilliant stealth sandbox." },
+    { id: "g15", title: "Batman: Arkham Origins", category: "games", rating: 4, month: "July", year: 2025, image: "", notes: "Facing 8 assassins on Christmas Eve as a younger Batman." },
+    { id: "g16", title: "Rise of the Tomb Raider", category: "games", rating: 4, month: "July", year: 2025, image: "", notes: "Searching for the Divine Source in the snowy peaks of Siberia." },
+    { id: "g17", title: "Batman: Arkham Asylum", category: "games", rating: 5, month: "August", year: 2025, image: "", notes: "Infiltrating the asylum to stop Joker's takeover." },
+    { id: "g18", title: "Batman: Arkham City", category: "games", rating: 5, month: "September", year: 2025, image: "", notes: "Navigating Gotham's mega-prison ruled by Hugo Strange." },
+    { id: "g19", title: "Call of Duty: Black Ops 1", category: "games", rating: 5, month: "October", year: 2025, image: "", notes: "Alex Mason, Vietnam, and the mystery of the numbers." },
+    { id: "g20", title: "Grand Theft Auto IV (GTA 4)", category: "games", rating: 5, month: "October", year: 2025, image: "", notes: "Niko Bellic's story. Great physics and dark atmosphere." },
+    { id: "g21", title: "Need for Speed", category: "games", rating: 5, month: "November", year: 2025, image: "", notes: "Classic arcade street racing." },
+    { id: "g22", title: "Call of Duty: Black Ops II", category: "games", rating: 5, month: "December", year: 2025, image: "", notes: "David Mason fighting Raul Menendez in the future." },
+    { id: "g23", title: "Hogwarts Legacy", category: "games", rating: 5, month: "January", year: 2026, image: "", notes: "Exploring the wizarding world and casting ancient magic." },
+    { id: "g24", title: "Shadow of the Tomb Raider", category: "games", rating: 5, month: "February", year: 2026, image: "", notes: "Lara Croft preventing a Mayan apocalypse." },
+    { id: "g25", title: "Red Dead Redemption 2", category: "games", rating: 5, month: "March", year: 2026, image: "", notes: "Arthur Morgan and the outlaw gang. An emotional masterpiece." },
+    { id: "g26", title: "Tekken 3", category: "games", rating: 5, month: "July", year: 2026, image: "", notes: "Played using RetroArch. Best PS1 fight game ever." },
+    { id: "g27", title: "Watch Dogs 2", category: "games", rating: 5, month: "July", year: 2026, image: "", notes: "Marcus Holloway hacking the San Francisco Bay Area." }
 ];
 
 const defaultAnime = [
@@ -59,7 +44,9 @@ let entertainmentList = [];
 // Initialize Page Data
 function initData() {
     const saved = localStorage.getItem("game_anime_vault");
-    if (saved) {
+    const version = localStorage.getItem("vault_version");
+    
+    if (saved && version === "v2") {
         try {
             entertainmentList = JSON.parse(saved);
         } catch (e) {
@@ -68,8 +55,10 @@ function initData() {
             saveData();
         }
     } else {
+        // Fresh install or migration to v2
         entertainmentList = [...defaultGames, ...defaultAnime];
         saveData();
+        localStorage.setItem("vault_version", "v2");
     }
 }
 
@@ -196,11 +185,25 @@ const modal = document.getElementById("item-modal");
 const closeModal = document.querySelector(".close-modal");
 let uploadedImageBase64 = "";
 
+// Helper to update image thumbnail preview in modal
+function updatePreview(src) {
+    const previewGroup = document.getElementById("image-preview-group");
+    const previewImg = document.getElementById("modal-image-preview");
+    if (src) {
+        previewImg.src = src;
+        previewGroup.style.display = "block";
+    } else {
+        previewGroup.style.display = "none";
+        previewImg.src = "";
+    }
+}
+
 // Compress local image files to save space in localStorage (Max 5MB limit)
 document.getElementById("form-image-file").addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) {
         uploadedImageBase64 = "";
+        updatePreview(document.getElementById("form-image").value.trim());
         return;
     }
 
@@ -237,6 +240,9 @@ document.getElementById("form-image-file").addEventListener("change", (e) => {
             
             // Clear URL input since file is uploaded
             document.getElementById("form-image").value = "";
+            
+            // Show preview
+            updatePreview(uploadedImageBase64);
         };
         img.src = event.target.result;
     };
@@ -244,10 +250,14 @@ document.getElementById("form-image-file").addEventListener("change", (e) => {
 });
 
 // Clear URL input if they start typing a URL
-document.getElementById("form-image").addEventListener("input", () => {
-    if (document.getElementById("form-image").value.trim() !== "") {
+document.getElementById("form-image").addEventListener("input", (e) => {
+    const val = e.target.value.trim();
+    if (val !== "") {
         document.getElementById("form-image-file").value = "";
         uploadedImageBase64 = "";
+        updatePreview(val);
+    } else {
+        updatePreview("");
     }
 });
 
@@ -256,6 +266,7 @@ function openModal(editItem = null) {
     const form = document.getElementById("item-form");
     form.reset();
     uploadedImageBase64 = "";
+    updatePreview("");
 
     if (editItem) {
         document.getElementById("modal-title").innerText = "Edit Item";
@@ -265,9 +276,14 @@ function openModal(editItem = null) {
         document.getElementById("form-rating").value = editItem.rating;
         document.getElementById("form-month").value = editItem.month;
         document.getElementById("form-year").value = editItem.year.toString();
+        
         document.getElementById("form-image").value = editItem.image.startsWith("data:") ? "" : editItem.image;
         uploadedImageBase64 = editItem.image.startsWith("data:") ? editItem.image : "";
         document.getElementById("form-notes").value = editItem.notes;
+        
+        if (editItem.image) {
+            updatePreview(editItem.image);
+        }
     } else {
         document.getElementById("modal-title").innerText = "Add New Item";
         document.getElementById("item-id").value = "";
