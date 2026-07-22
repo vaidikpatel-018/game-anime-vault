@@ -60,7 +60,13 @@ let entertainmentList = [];
 function initData() {
     const saved = localStorage.getItem("game_anime_vault");
     if (saved) {
-        entertainmentList = JSON.parse(saved);
+        try {
+            entertainmentList = JSON.parse(saved);
+        } catch (e) {
+            console.error("Error parsing saved data, resetting to defaults:", e);
+            entertainmentList = [...defaultGames, ...defaultAnime];
+            saveData();
+        }
     } else {
         entertainmentList = [...defaultGames, ...defaultAnime];
         saveData();
@@ -68,7 +74,7 @@ function initData() {
 }
 
 function saveData() {
-    localStorage.setItem("game_anime_vault", JSON.parse(JSON.stringify(entertainmentList)));
+    localStorage.setItem("game_anime_vault", JSON.stringify(entertainmentList));
 }
 
 // Generate Cover Color Gradients based on string hashes
