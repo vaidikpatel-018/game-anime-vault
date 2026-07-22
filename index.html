@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaidik's Entertainment Log</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-glow"></div>
+    
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>VAIDIK'S <span>LOG</span></h1>
+                <p>Tracked Games & Anime since Jan 2024</p>
+            </div>
+            <div class="header-actions">
+                <button id="add-btn" class="btn btn-primary">+ Add New Item</button>
+                <button id="export-btn" class="btn btn-secondary">💾 Export JSON</button>
+                <button id="import-btn" class="btn btn-secondary">📂 Import JSON</button>
+                <input type="file" id="import-file" style="display: none;" accept=".json">
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Navigation Tabs -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="games">🎮 Games</button>
+            <button class="tab-btn" data-tab="anime">🌸 Anime</button>
+        </div>
+
+        <!-- Filter & Sorting Controls -->
+        <section class="controls-section">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search by title...">
+            </div>
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="year-filter">Year:</label>
+                    <select id="year-filter">
+                        <option value="all">All Years</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sort-filter">Sort:</label>
+                    <select id="sort-filter">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="alpha">Alphabetical</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Grid View -->
+        <section id="grid-section" class="grid-container">
+            <!-- Cards will be injected here via JavaScript -->
+        </section>
+    </main>
+
+    <!-- Glassmorphic Modal for Adding/Editing Items -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Add New Item</h2>
+            <form id="item-form">
+                <input type="hidden" id="item-id">
+                
+                <div class="form-group">
+                    <label for="form-title">Title*</label>
+                    <input type="text" id="form-title" required placeholder="Enter game or anime name">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="form-category">Category*</label>
+                        <select id="form-category" required>
+                            <option value="games">Game</option>
+                            <option value="anime">Anime</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-rating">Rating (Stars)</label>
+                        <select id="form-rating">
+                            <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                            <option value="3">⭐⭐⭐ (3/5)</option>
+                            <option value="2">⭐⭐ (2/5)</option>
+                            <option value="1">⭐ (1/5)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="form-month">Month*</label>
+                        <select id="form-month" required>
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form-year">Year*</label>
+                        <select id="form-year" required>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="form-image">Cover Image URL</label>
+                    <input type="url" id="form-image" placeholder="https://example.com/cover-image.jpg">
+                    <small>Leave blank for a glowing default color background.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="form-notes">Short Note / Review</label>
+                    <textarea id="form-notes" rows="3" placeholder="What did you think of it?"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Save Item</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Vaidik's Log. Custom coded page.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
