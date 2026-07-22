@@ -191,14 +191,71 @@ function render() {
     });
 }
 
-// Modal handling
+// Modal handling and Image Upload Compression
 const modal = document.getElementById("item-modal");
 const closeModal = document.querySelector(".close-modal");
+let uploadedImageBase64 = "";
+
+// Compress local image files to save space in localStorage (Max 5MB limit)
+document.getElementById("form-image-file").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+        uploadedImageBase64 = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            
+            // Limit image dimensions to max 400px (plenty for card display)
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 400;
+            
+            if (width > height) {
+                if (width > maxDim) {
+                    height = Math.round(height * (maxDim / width));
+                    width = maxDim;
+                }
+            } else {
+                if (height > maxDim) {
+                    width = Math.round(width * (maxDim / height));
+                    height = maxDim;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convert to JPEG with 0.7 quality (highly optimized base64 string)
+            uploadedImageBase64 = canvas.toDataURL("image/jpeg", 0.7);
+            
+            // Clear URL input since file is uploaded
+            document.getElementById("form-image").value = "";
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+// Clear URL input if they start typing a URL
+document.getElementById("form-image").addEventListener("input", () => {
+    if (document.getElementById("form-image").value.trim() !== "") {
+        document.getElementById("form-image-file").value = "";
+        uploadedImageBase64 = "";
+    }
+});
 
 function openModal(editItem = null) {
     modal.style.display = "flex";
     const form = document.getElementById("item-form");
     form.reset();
+    uploadedImageBase64 = "";
 
     if (editItem) {
         document.getElementById("modal-title").innerText = "Edit Item";
@@ -208,7 +265,8 @@ function openModal(editItem = null) {
         document.getElementById("form-rating").value = editItem.rating;
         document.getElementById("form-month").value = editItem.month;
         document.getElementById("form-year").value = editItem.year.toString();
-        document.getElementById("form-image").value = editItem.image;
+        document.getElementById("form-image").value = editItem.image.startsWith("data:") ? "" : editItem.image;
+        uploadedImageBase64 = editItem.image.startsWith("data:") ? editItem.image : "";
         document.getElementById("form-notes").value = editItem.notes;
     } else {
         document.getElementById("modal-title").innerText = "Add New Item";
@@ -237,8 +295,15 @@ document.getElementById("item-form").addEventListener("submit", (e) => {
     const rating = parseInt(document.getElementById("form-rating").value);
     const month = document.getElementById("form-month").value;
     const year = parseInt(document.getElementById("form-year").value);
-    const image = document.getElementById("form-image").value;
     const notes = document.getElementById("form-notes").value;
+    
+    // Choose between uploaded file or pasted URL
+    let image = "";
+    if (uploadedImageBase64) {
+        image = uploadedImageBase64;
+    } else {
+        image = document.getElementById("form-image").value.trim();
+    }
 
     if (id) {
         // Edit existing
