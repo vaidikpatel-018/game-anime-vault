@@ -58,7 +58,7 @@ let entertainmentList = [];
 
 // Initialize Page Data
 function initData() {
-    const saved = localStorage.getItem("entertainment_log");
+    const saved = localStorage.getItem("game_anime_vault");
     if (saved) {
         entertainmentList = JSON.parse(saved);
     } else {
@@ -68,7 +68,7 @@ function initData() {
 }
 
 function saveData() {
-    localStorage.setItem("entertainment_log", JSON.parse(JSON.stringify(entertainmentList)));
+    localStorage.setItem("game_anime_vault", JSON.parse(JSON.stringify(entertainmentList)));
 }
 
 // Generate Cover Color Gradients based on string hashes
@@ -273,7 +273,7 @@ document.getElementById("export-btn").addEventListener("click", () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entertainmentList, null, 4));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "entertainment_log_backup.json");
+    downloadAnchor.setAttribute("download", "game_anime_vault_backup.json");
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
