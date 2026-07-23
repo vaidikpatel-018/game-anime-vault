@@ -423,7 +423,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
     }
 });
 
-// Database Sync: Load User Items (Auto-populate defaults if empty)
+// Database Sync: Load User Items (Auto-populate defaults ONLY for allowed emails if empty)
 async function loadUserData() {
     if (!currentUser) return;
 
@@ -440,27 +440,40 @@ async function loadUserData() {
         entertainmentList = data;
         render();
     } else {
-        console.log("No data found for user, initializing defaults...");
-        const defaults = [...defaultGames, ...defaultAnime].map(item => ({
-            id: item.id,
-            user_id: currentUser.id,
-            title: item.title,
-            category: item.category,
-            rating: item.rating,
-            month: item.month,
-            year: item.year,
-            image: item.image || "",
-            notes: item.notes || ""
-        }));
+        const allowedEmails = [
+            "demo@example.com", 
+            "patelvaidik2232@gmail.com", 
+            "patelvaidik2232@gmail"
+        ];
+        const shouldPopulate = allowedEmails.includes(currentUser.email.toLowerCase());
 
-        const { error: insertError } = await supabaseClient
-            .from("vault_items")
-            .insert(defaults);
+        if (shouldPopulate) {
+            console.log("Empty database for authorized account, initializing defaults...");
+            const defaults = [...defaultGames, ...defaultAnime].map(item => ({
+                id: item.id,
+                user_id: currentUser.id,
+                title: item.title,
+                category: item.category,
+                rating: item.rating,
+                month: item.month,
+                year: item.year,
+                image: item.image || "",
+                notes: item.notes || ""
+            }));
 
-        if (insertError) {
-            console.error("Error inserting defaults:", insertError);
+            const { error: insertError } = await supabaseClient
+                .from("vault_items")
+                .insert(defaults);
+
+            if (insertError) {
+                console.error("Error inserting defaults:", insertError);
+            } else {
+                entertainmentList = defaults;
+                render();
+            }
         } else {
-            entertainmentList = defaults;
+            console.log("Empty database for new account, starting from scratch.");
+            entertainmentList = [];
             render();
         }
     }
