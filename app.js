@@ -314,6 +314,7 @@ const defaultAnime = [
 let currentTab = "games";
 let entertainmentList = [];
 let currentUser = null;
+let authMode = "login"; // "login" or "signup"
 
 // Auth Screen Toggling
 function showAuthScreen() {
@@ -321,6 +322,7 @@ function showAuthScreen() {
     document.getElementById("auth-container").style.display = "flex";
     document.getElementById("auth-error-msg").style.display = "none";
     document.getElementById("auth-form").reset();
+    setAuthMode("login");
 }
 
 function showAppScreen(user) {
@@ -329,59 +331,78 @@ function showAppScreen(user) {
     document.getElementById("user-email-display").innerText = user.email;
 }
 
-// Auth Handlers
+function setAuthMode(mode) {
+    authMode = mode;
+    const subtitle = document.getElementById("auth-subtitle");
+    const submitBtn = document.getElementById("auth-submit-btn");
+    const toggleLink = document.getElementById("auth-toggle-link");
+    const toggleText = toggleLink.parentNode;
+    const errorDiv = document.getElementById("auth-error-msg");
+    
+    errorDiv.style.display = "none";
+    
+    if (authMode === "login") {
+        subtitle.innerText = "Log in to manage your private gaming logs & watch lists";
+        submitBtn.innerText = "Log In";
+        toggleText.innerHTML = `Don't have an account? <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Sign Up</a>`;
+    } else {
+        subtitle.innerText = "Create a new account to sync your lists across devices";
+        submitBtn.innerText = "Create Account";
+        toggleText.innerHTML = `Already have an account? <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Log In</a>`;
+    }
+    
+    // Re-attach listener since we modified innerHTML
+    document.getElementById("auth-toggle-link").addEventListener("click", (e) => {
+        e.preventDefault();
+        setAuthMode(authMode === "login" ? "signup" : "login");
+    });
+}
+
+// Attach initial auth toggle listener
+document.getElementById("auth-toggle-link").addEventListener("click", (e) => {
+    e.preventDefault();
+    setAuthMode(authMode === "login" ? "signup" : "login");
+});
+
+// Auth Form Submission (Handles both Login and Sign Up)
 document.getElementById("auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("auth-email").value.trim();
     const password = document.getElementById("auth-password").value;
     const errorDiv = document.getElementById("auth-error-msg");
-    errorDiv.style.display = "none";
+    const submitBtn = document.getElementById("auth-submit-btn");
     
-    const loginBtn = document.getElementById("btn-login");
-    loginBtn.innerText = "Logging in...";
-    loginBtn.disabled = true;
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
-
-    if (error) {
-        errorDiv.innerText = error.message;
-        errorDiv.style.display = "block";
-        loginBtn.innerText = "Log In";
-        loginBtn.disabled = false;
-    }
-});
-
-document.getElementById("btn-signup").addEventListener("click", async () => {
-    const email = document.getElementById("auth-email").value.trim();
-    const password = document.getElementById("auth-password").value;
-    const errorDiv = document.getElementById("auth-error-msg");
     errorDiv.style.display = "none";
+    submitBtn.disabled = true;
+    
+    if (authMode === "login") {
+        submitBtn.innerText = "Logging in...";
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
-    if (!email || !password) {
-        errorDiv.innerText = "Please enter an email and password to sign up.";
-        errorDiv.style.display = "block";
-        return;
-    }
-
-    const signupBtn = document.getElementById("btn-signup");
-    signupBtn.innerText = "Signing up...";
-    signupBtn.disabled = true;
-
-    const { data, error } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password
-    });
-
-    if (error) {
-        errorDiv.innerText = error.message;
-        errorDiv.style.display = "block";
-        signupBtn.innerText = "Sign Up / Create Account";
-        signupBtn.disabled = false;
+        if (error) {
+            errorDiv.innerText = error.message;
+            errorDiv.style.display = "block";
+            submitBtn.innerText = "Log In";
+            submitBtn.disabled = false;
+        }
     } else {
-        alert("Account created successfully! You are now logged in.");
+        submitBtn.innerText = "Creating account...";
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            errorDiv.innerText = error.message;
+            errorDiv.style.display = "block";
+            submitBtn.innerText = "Create Account";
+            submitBtn.disabled = false;
+        } else {
+            alert("Account created successfully! You are now logged in.");
+        }
     }
 });
 

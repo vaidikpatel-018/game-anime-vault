@@ -174,7 +174,7 @@
             <div class="logo">
                 <h1>GAME-ANIME <span>VAULT</span></h1>
             </div>
-            <p class="auth-subtitle">Log in to manage your private gaming logs & watch lists</p>
+            <p id="auth-subtitle" class="auth-subtitle">Log in to manage your private gaming logs & watch lists</p>
             <form id="auth-form">
                 <div class="form-group">
                     <label for="auth-email">Email Address</label>
@@ -185,8 +185,10 @@
                     <input type="password" id="auth-password" required placeholder="••••••••">
                 </div>
                 <div id="auth-error-msg" class="error-msg" style="display: none;"></div>
-                <button type="submit" id="btn-login" class="btn btn-primary btn-block">Log In</button>
-                <button type="button" id="btn-signup" class="btn btn-secondary btn-block" style="margin-top: 10px;">Sign Up / Create Account</button>
+                <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block">Log In</button>
+                <p class="auth-toggle-text" style="margin-top: 15px; font-size: 13px; color: var(--text-secondary);">
+                    Don't have an account? <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Sign Up</a>
+                </p>
             </form>
             
             <div class="demo-badge">
