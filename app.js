@@ -518,12 +518,9 @@ function applyThemeForTab(tab) {
         root.style.setProperty('--accent-glow', 'rgba(255, 0, 85, 0.15)');
         root.style.setProperty('--btn-text-color', '#ffffff');
         root.style.setProperty('--text-secondary', '#9ca3af');
+        root.style.setProperty('--glow-color', 'rgba(255, 0, 85, 0.18)');
         document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #2a0b14 0%, #07070a 80%)';
         document.body.style.backgroundAttachment = 'fixed';
-        const glow = document.querySelector('.background-glow');
-        if (glow) {
-            glow.style.background = 'radial-gradient(circle, rgba(255, 0, 85, 0.12) 0%, rgba(0, 0, 0, 0) 70%)';
-        }
     } else if (tab === "anime") {
         root.style.setProperty('--bg-color', '#06020c');
         root.style.setProperty('--card-bg', 'rgba(18, 9, 29, 0.55)');
@@ -532,12 +529,9 @@ function applyThemeForTab(tab) {
         root.style.setProperty('--accent-glow', 'rgba(168, 85, 247, 0.15)');
         root.style.setProperty('--btn-text-color', '#ffffff');
         root.style.setProperty('--text-secondary', '#9ca3af');
+        root.style.setProperty('--glow-color', 'rgba(168, 85, 247, 0.18)');
         document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #290e44 0%, #06020c 75%)';
         document.body.style.backgroundAttachment = 'fixed';
-        const glow = document.querySelector('.background-glow');
-        if (glow) {
-            glow.style.background = 'radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(0, 0, 0, 0) 70%)';
-        }
     } else if (tab === "news") {
         root.style.setProperty('--bg-color', '#000000');
         root.style.setProperty('--card-bg', 'rgba(30, 30, 30, 0.8)');
@@ -546,12 +540,9 @@ function applyThemeForTab(tab) {
         root.style.setProperty('--accent-glow', 'rgba(255, 255, 255, 0.2)');
         root.style.setProperty('--btn-text-color', '#000000');
         root.style.setProperty('--text-secondary', '#d1d5db');
+        root.style.setProperty('--glow-color', 'rgba(255, 255, 255, 0.08)');
         document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #333333 0%, #000000 80%)';
         document.body.style.backgroundAttachment = 'fixed';
-        const glow = document.querySelector('.background-glow');
-        if (glow) {
-            glow.style.background = 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%)';
-        }
     }
 }
 
@@ -1468,3 +1459,11 @@ if (closeWelcomeBtn) {
         }
     });
 }
+
+// Interactive Mouse Follow background glow
+window.addEventListener("mousemove", (e) => {
+    const x = e.clientX;
+    const y = e.clientY;
+    document.documentElement.style.setProperty('--mouse-x', `${x}px`);
+    document.documentElement.style.setProperty('--mouse-y', `${y}px`);
+});
