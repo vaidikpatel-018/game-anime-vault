@@ -1,0 +1,3 @@
+# Force GitHub Linguist to detect app.js as source code and count it as JavaScript in language statistics
+app.js linguist-detectable=true
+app.js linguist-generated=false
