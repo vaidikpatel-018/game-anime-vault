@@ -762,11 +762,13 @@ function render() {
 
     if (filtered.length === 0) {
         const placeholder = document.createElement("div");
-        placeholder.style.gridColumn = "1 / -1";
-        placeholder.style.textAlign = "center";
-        placeholder.style.padding = "50px 0";
-        placeholder.style.color = "var(--text-secondary)";
-        placeholder.innerHTML = `<h3 style="margin-bottom:10px;">No items found</h3><p>Try resetting filters or adding a new entry!</p>`;
+        placeholder.className = "empty-vault-state";
+        placeholder.innerHTML = `
+            <div class="empty-state-icon">📂</div>
+            <h3>Your Vault is empty</h3>
+            <p>You haven't logged any ${currentTab === 'games' ? 'games' : 'anime series'} for the selected filters. Let's create your first record!</p>
+            <button class="btn btn-primary" onclick="document.getElementById('add-btn').click()">+ Add First Log</button>
+        `;
         grid.appendChild(placeholder);
     }
 
@@ -1444,3 +1446,25 @@ document.getElementById("profile-form").addEventListener("submit", async (e) => 
         showToast("Profile updated successfully!");
     }
 });
+
+// Option A: Welcome Hero Card dismissing logic
+const welcomeBanner = document.getElementById("welcome-banner");
+const closeWelcomeBtn = document.querySelector(".close-welcome");
+
+if (localStorage.getItem("welcome-dismissed") === "true") {
+    if (welcomeBanner) welcomeBanner.style.display = "none";
+}
+
+if (closeWelcomeBtn) {
+    closeWelcomeBtn.addEventListener("click", () => {
+        if (welcomeBanner) {
+            welcomeBanner.style.opacity = "0";
+            welcomeBanner.style.transform = "translateY(-10px)";
+            welcomeBanner.style.transition = "all 0.3s ease";
+            setTimeout(() => {
+                welcomeBanner.style.display = "none";
+                localStorage.setItem("welcome-dismissed", "true");
+            }, 300);
+        }
+    });
+}

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="style.css?v=14">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
 </head>
 <body>
@@ -33,6 +33,21 @@
         </header>
 
     <main class="container">
+        <!-- Welcome Hero Card -->
+        <div id="welcome-banner" class="welcome-card" style="margin-bottom: 25px;">
+            <div class="welcome-card-content">
+                <span class="close-welcome">&times;</span>
+                <h2>🎮 Welcome to Game-Anime Vault! 🎬</h2>
+                <p>Your premium personal logging space. Keep track of what you've played and watched, write detailed reviews, and catch up on top gaming news.</p>
+                <div class="welcome-features">
+                    <div class="feature-badge"><span>🎮 Log Games</span></div>
+                    <div class="feature-badge"><span>🍿 Track Anime</span></div>
+                    <div class="feature-badge"><span>📰 Daily RSS News</span></div>
+                    <div class="feature-badge"><span>💾 Secure Cloud Sync</span></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Navigation Tabs -->
         <div class="tabs-container">
             <button class="tab-btn active" data-tab="games">🎮 Games</button>
@@ -313,10 +328,20 @@
                 <p><strong>Password:</strong> demo123456</p>
                 <small>Use these details to test the live server without creating an account.</small>
             </div>
+            
+            <!-- Option B: Auth Features Preview -->
+            <div class="auth-features-preview" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: left;">
+                <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 12px; font-weight: 600; letter-spacing: 0.5px;">Vault Features</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+                    <li style="display: flex; align-items: center; gap: 8px;">✨ <span><strong>Games Logging</strong>: Track monthly gaming records & reviews.</span></li>
+                    <li style="display: flex; align-items: center; gap: 8px;">🍿 <span><strong>Anime Tracking</strong>: Save watched anime episodes & ratings.</span></li>
+                    <li style="display: flex; align-items: center; gap: 8px;">📰 <span><strong>Gaming News</strong>: Unified RSS PC/Console gaming feeds.</span></li>
+                </ul>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=15"></script>
+    <script src="app.js?v=16"></script>
 </body>
 </html>
