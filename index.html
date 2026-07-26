@@ -225,6 +225,18 @@
         </div>
     </div>
 
+    <!-- Glassmorphic Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 30px;">
+            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 15px; color: var(--text-primary);">Delete Item?</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 25px;">Are you sure you want to permanently delete "<span id="delete-item-name" style="color: var(--accent-color); font-weight: 600;"></span>" from your vault?</p>
+            <div style="display: flex; gap: 12px;">
+                <button id="delete-confirm-btn" class="btn btn-danger" style="flex: 1; padding: 12px;">Yes, Delete</button>
+                <button id="delete-cancel-btn" class="btn btn-secondary" style="flex: 1; padding: 12px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Slide-out Profile Settings Drawer -->
     <div id="profile-drawer" class="drawer">
         <div class="drawer-content">
@@ -342,6 +354,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=19"></script>
+    <script src="app.js?v=20"></script>
 </body>
 </html>

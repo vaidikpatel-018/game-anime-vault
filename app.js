@@ -510,6 +510,7 @@ function getGlowStyle(title) {
 
 let newsList = [];
 let isNewsLoading = false;
+let itemToDeleteId = null;
 
 function applyThemeForTab(tab) {
     const root = document.documentElement;
@@ -768,7 +769,7 @@ function render() {
 
     // Attach card event listeners
     document.querySelectorAll(".btn-delete").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
+        btn.addEventListener("click", (e) => {
             const deleteBtn = e.target.closest(".btn-delete");
             const id = deleteBtn.getAttribute("data-id");
 
@@ -777,22 +778,11 @@ function render() {
                 return;
             }
 
-            if (confirm("Are you sure you want to delete this item?")) {
-                deleteBtn.disabled = true;
-
-                const { error } = await supabaseClient
-                    .from("vault_items")
-                    .delete()
-                    .eq("id", id)
-                    .eq("user_id", currentUser.id);
-
-                if (error) {
-                    alert("Error deleting item: " + error.message);
-                    deleteBtn.disabled = false;
-                } else {
-                    entertainmentList = entertainmentList.filter(item => item.id !== id);
-                    render();
-                }
+            const item = entertainmentList.find(item => item.id === id);
+            if (item) {
+                itemToDeleteId = id;
+                document.getElementById("delete-item-name").innerText = item.title;
+                document.getElementById("delete-confirm-modal").style.display = "flex";
             }
         });
     });
@@ -1469,4 +1459,52 @@ window.addEventListener("mousemove", (e) => {
     const y = e.clientY;
     document.documentElement.style.setProperty('--mouse-x', `${x}px`);
     document.documentElement.style.setProperty('--mouse-y', `${y}px`);
+});
+
+// Custom Delete Confirmation Modal Logic
+const deleteConfirmModal = document.getElementById("delete-confirm-modal");
+const deleteConfirmBtn = document.getElementById("delete-confirm-btn");
+const deleteCancelBtn = document.getElementById("delete-cancel-btn");
+
+if (deleteCancelBtn) {
+    deleteCancelBtn.addEventListener("click", () => {
+        deleteConfirmModal.style.display = "none";
+        itemToDeleteId = null;
+    });
+}
+
+if (deleteConfirmBtn) {
+    deleteConfirmBtn.addEventListener("click", async () => {
+        if (!itemToDeleteId) return;
+
+        deleteConfirmBtn.disabled = true;
+        deleteConfirmBtn.innerText = "Deleting...";
+
+        const { error } = await supabaseClient
+            .from("vault_items")
+            .delete()
+            .eq("id", itemToDeleteId)
+            .eq("user_id", currentUser.id);
+
+        deleteConfirmBtn.disabled = false;
+        deleteConfirmBtn.innerText = "Yes, Delete";
+        deleteConfirmModal.style.display = "none";
+
+        if (error) {
+            showToast("Error deleting item: " + error.message, false);
+        } else {
+            entertainmentList = entertainmentList.filter(item => item.id !== itemToDeleteId);
+            itemToDeleteId = null;
+            render();
+            showToast("Item deleted successfully.");
+        }
+    });
+}
+
+// Close delete confirm modal when clicking outside
+window.addEventListener("click", (e) => {
+    if (e.target === deleteConfirmModal) {
+        deleteConfirmModal.style.display = "none";
+        itemToDeleteId = null;
+    }
 });
