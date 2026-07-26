@@ -328,7 +328,7 @@ function showAuthScreen() {
 function showAppScreen(user) {
     document.getElementById("auth-container").style.display = "none";
     document.getElementById("app-container").style.display = "block";
-    document.getElementById("user-email-display").innerText = user.email;
+    updateUserProfileUI(user);
     applyThemeForTab(currentTab);
 }
 
@@ -339,16 +339,22 @@ function setAuthMode(mode) {
     const toggleLink = document.getElementById("auth-toggle-link");
     const toggleText = toggleLink.parentNode;
     const errorDiv = document.getElementById("auth-error-msg");
+    const usernameGroup = document.getElementById("username-group");
+    const authUsernameInput = document.getElementById("auth-username");
     
     errorDiv.style.display = "none";
     
     if (authMode === "login") {
         subtitle.innerText = "Log in to manage your private gaming logs & watch lists";
         submitBtn.innerText = "Log In";
+        usernameGroup.style.display = "none";
+        authUsernameInput.removeAttribute("required");
         toggleText.innerHTML = `Don't have an account? <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Sign Up</a>`;
     } else {
         subtitle.innerText = "Create a new account to sync your lists across devices";
         submitBtn.innerText = "Create Account";
+        usernameGroup.style.display = "block";
+        authUsernameInput.setAttribute("required", "true");
         toggleText.innerHTML = `Already have an account? <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Log In</a>`;
     }
     
@@ -391,9 +397,16 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
         }
     } else {
         submitBtn.innerText = "Creating account...";
+        const username = document.getElementById("auth-username").value.trim();
         const { data, error } = await supabaseClient.auth.signUp({
             email: email,
-            password: password
+            password: password,
+            options: {
+                data: {
+                    username: username,
+                    avatar_url: ""
+                }
+            }
         });
 
         if (error) {
@@ -407,7 +420,8 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
     }
 });
 
-document.getElementById("logout-btn").addEventListener("click", async () => {
+document.getElementById("profile-logout-btn").addEventListener("click", async () => {
+    document.getElementById("profile-drawer").classList.remove("open");
     await supabaseClient.auth.signOut();
 });
 
@@ -1251,5 +1265,151 @@ document.getElementById("detail-edit-btn").addEventListener("click", () => {
     if (item) {
         detailModal.style.display = "none";
         openModal(item);
+    }
+});
+
+// Profile Settings Side Drawer & Metadata Updates
+const profileDrawer = document.getElementById("profile-drawer");
+const profileTrigger = document.getElementById("header-profile-trigger");
+const closeDrawerBtn = document.querySelector(".close-drawer");
+let uploadedAvatarBase64 = "";
+
+function updateUserProfileUI(user) {
+    if (!user) return;
+    const metadata = user.user_metadata || {};
+    const username = metadata.username || user.email.split("@")[0];
+    const avatar = metadata.avatar_url || "";
+    
+    // Header avatar
+    const headerAvatar = document.getElementById("header-avatar");
+    const headerAvatarFallback = document.getElementById("header-avatar-fallback");
+    if (avatar) {
+        headerAvatar.src = avatar;
+        headerAvatar.style.display = "block";
+        headerAvatarFallback.style.display = "none";
+    } else {
+        headerAvatar.src = "";
+        headerAvatar.style.display = "none";
+        headerAvatarFallback.style.display = "flex";
+        headerAvatarFallback.innerText = username.substring(0, 2).toUpperCase();
+    }
+    
+    // Drawer avatar
+    const drawerAvatar = document.getElementById("profile-drawer-avatar");
+    const drawerAvatarFallback = document.getElementById("profile-drawer-avatar-fallback");
+    if (avatar) {
+        drawerAvatar.src = avatar;
+        drawerAvatar.style.display = "block";
+        drawerAvatarFallback.style.display = "none";
+    } else {
+        drawerAvatar.src = "";
+        drawerAvatar.style.display = "none";
+        drawerAvatarFallback.style.display = "flex";
+        drawerAvatarFallback.innerText = username.substring(0, 2).toUpperCase();
+    }
+    
+    document.getElementById("profile-username").value = username;
+    document.getElementById("profile-email-readonly").value = user.email;
+}
+
+if (profileTrigger) {
+    profileTrigger.addEventListener("click", () => {
+        uploadedAvatarBase64 = ""; // Reset file state
+        updateUserProfileUI(currentUser);
+        profileDrawer.classList.add("open");
+    });
+}
+
+if (closeDrawerBtn) {
+    closeDrawerBtn.addEventListener("click", () => {
+        profileDrawer.classList.remove("open");
+    });
+}
+
+// Close drawer when clicking outside it
+window.addEventListener("click", (e) => {
+    if (profileDrawer && profileDrawer.classList.contains("open")) {
+        const isClickInside = profileDrawer.contains(e.target) || profileTrigger.contains(e.target);
+        if (!isClickInside) {
+            profileDrawer.classList.remove("open");
+        }
+    }
+});
+
+// Profile avatar image upload compression (cropped center to 100x100 jpeg)
+document.getElementById("profile-avatar-file").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement("canvas");
+            canvas.width = 100;
+            canvas.height = 100;
+            const ctx = canvas.getContext("2d");
+            
+            // Draw square cropped center of image to canvas
+            const size = Math.min(img.width, img.height);
+            const sx = (img.width - size) / 2;
+            const sy = (img.height - size) / 2;
+            ctx.drawImage(img, sx, sy, size, size, 0, 0, 100, 100);
+            
+            uploadedAvatarBase64 = canvas.toDataURL("image/jpeg", 0.7);
+            
+            // Update preview immediately
+            const drawerAvatar = document.getElementById("profile-drawer-avatar");
+            const drawerAvatarFallback = document.getElementById("profile-drawer-avatar-fallback");
+            drawerAvatar.src = uploadedAvatarBase64;
+            drawerAvatar.style.display = "block";
+            drawerAvatarFallback.style.display = "none";
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+// Profile Settings Form Submission
+document.getElementById("profile-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newUsername = document.getElementById("profile-username").value.trim();
+    const submitBtn = e.target.querySelector("button[type='submit']");
+    
+    if (!newUsername) {
+        showToast("Username cannot be empty!", false);
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Saving Profile...";
+    
+    const updateData = {
+        username: newUsername
+    };
+    
+    if (uploadedAvatarBase64) {
+        updateData.avatar_url = uploadedAvatarBase64;
+    } else if (currentUser.user_metadata && currentUser.user_metadata.avatar_url) {
+        updateData.avatar_url = currentUser.user_metadata.avatar_url;
+    } else {
+        updateData.avatar_url = "";
+    }
+    
+    const { data, error } = await supabaseClient.auth.updateUser({
+        data: updateData
+    });
+    
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Save Profile";
+    
+    if (error) {
+        showToast("Error updating profile: " + error.message, false);
+    } else {
+        currentUser = data.user;
+        updateUserProfileUI(currentUser);
+        uploadedAvatarBase64 = ""; // Reset
+        profileDrawer.classList.remove("open");
+        showToast("Profile updated successfully!");
     }
 });
