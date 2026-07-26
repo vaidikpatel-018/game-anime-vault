@@ -1107,7 +1107,6 @@ document.getElementById("feedback-form").addEventListener("submit", async (e) =>
     submitBtn.disabled = true;
     submitBtn.innerText = "Submitting...";
     
-    let success = false;
     try {
         const { error } = await supabaseClient
             .from("feedback")
@@ -1117,23 +1116,16 @@ document.getElementById("feedback-form").addEventListener("submit", async (e) =>
                 message: feedbackText
             }]);
         
-        if (!error) {
-            success = true;
+        if (error) {
+            console.error("Supabase feedback insert error:", error.message);
         }
     } catch (err) {
-        console.error("Supabase feedback insert error:", err);
+        console.error("Error submitting feedback:", err);
     }
     
     submitBtn.disabled = false;
     submitBtn.innerText = "Submit Feedback";
     feedbackModal.style.display = "none";
     
-    if (success) {
-        alert("Thank you for your feedback! It has been submitted.");
-    } else {
-        alert("Connecting to mail client to send your feedback...");
-        const subject = encodeURIComponent("Feedback / Bug Report - Game & Anime Vault");
-        const body = encodeURIComponent(feedbackText);
-        window.location.href = `mailto:patelvaidik2232@gmail.com?subject=${subject}&body=${body}`;
-    }
+    alert("Thank you! Your feedback has been submitted.");
 });
