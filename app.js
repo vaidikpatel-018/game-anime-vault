@@ -1029,7 +1029,13 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     });
 });
 
-document.getElementById("add-btn").addEventListener("click", () => openModal());
+document.getElementById("add-btn").addEventListener("click", () => {
+    if (currentUser && currentUser.email === "demo@example.com") {
+        showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
+        return;
+    }
+    openModal();
+});
 
 // Export JSON Utility (Client-side formatting)
 document.getElementById("export-btn").addEventListener("click", () => {
@@ -1048,6 +1054,10 @@ document.getElementById("export-btn").addEventListener("click", () => {
 // Import JSON Utility Sync with Supabase
 const fileInput = document.getElementById("import-file");
 document.getElementById("import-btn").addEventListener("click", () => {
+    if (currentUser && currentUser.email === "demo@example.com") {
+        showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
+        return;
+    }
     fileInput.click();
 });
 
