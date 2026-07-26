@@ -594,3 +594,7 @@ footer {
     padding-right: 15px;
     display: inline-block;
 }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

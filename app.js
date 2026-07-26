@@ -329,6 +329,7 @@ function showAppScreen(user) {
     document.getElementById("auth-container").style.display = "none";
     document.getElementById("app-container").style.display = "block";
     document.getElementById("user-email-display").innerText = user.email;
+    applyThemeForTab(currentTab);
 }
 
 function setAuthMode(mode) {
@@ -490,6 +491,96 @@ function getGlowStyle(title) {
     return `background: linear-gradient(135deg, hsl(${h1}, 70%, 15%) 0%, hsl(${h2}, 80%, 25%) 100%);`;
 }
 
+let newsList = [];
+let isNewsLoading = false;
+
+function applyThemeForTab(tab) {
+    const root = document.documentElement;
+    if (tab === "games") {
+        root.style.setProperty('--bg-color', '#07070a');
+        root.style.setProperty('--card-bg', 'rgba(18, 12, 16, 0.65)');
+        root.style.setProperty('--border-color', 'rgba(255, 0, 85, 0.12)');
+        root.style.setProperty('--accent-color', '#ff0055');
+        root.style.setProperty('--accent-glow', 'rgba(255, 0, 85, 0.15)');
+        root.style.setProperty('--text-secondary', '#9ca3af');
+        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #2a0b14 0%, #07070a 80%)';
+        document.body.style.backgroundAttachment = 'fixed';
+        const glow = document.querySelector('.background-glow');
+        if (glow) {
+            glow.style.background = 'radial-gradient(circle, rgba(255, 0, 85, 0.12) 0%, rgba(0, 0, 0, 0) 70%)';
+        }
+    } else if (tab === "anime") {
+        root.style.setProperty('--bg-color', '#06020c');
+        root.style.setProperty('--card-bg', 'rgba(18, 9, 29, 0.55)');
+        root.style.setProperty('--border-color', 'rgba(168, 85, 247, 0.12)');
+        root.style.setProperty('--accent-color', '#a855f7');
+        root.style.setProperty('--accent-glow', 'rgba(168, 85, 247, 0.15)');
+        root.style.setProperty('--text-secondary', '#9ca3af');
+        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #290e44 0%, #06020c 75%)';
+        document.body.style.backgroundAttachment = 'fixed';
+        const glow = document.querySelector('.background-glow');
+        if (glow) {
+            glow.style.background = 'radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(0, 0, 0, 0) 70%)';
+        }
+    } else if (tab === "news") {
+        root.style.setProperty('--bg-color', '#000000');
+        root.style.setProperty('--card-bg', 'rgba(30, 30, 30, 0.8)');
+        root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.25)');
+        root.style.setProperty('--accent-color', '#ffffff');
+        root.style.setProperty('--accent-glow', 'rgba(255, 255, 255, 0.2)');
+        root.style.setProperty('--text-secondary', '#d1d5db');
+        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #333333 0%, #000000 80%)';
+        document.body.style.backgroundAttachment = 'fixed';
+        const glow = document.querySelector('.background-glow');
+        if (glow) {
+            glow.style.background = 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%)';
+        }
+    }
+}
+
+async function loadNewsData() {
+    if (newsList.length > 0) {
+        render();
+        return;
+    }
+    
+    isNewsLoading = true;
+    render();
+    
+    try {
+        const polygonUrl = "https://api.rss2json.com/v1/api.json?rss_url=https://www.polygon.com/rss/gaming/index.xml";
+        const pcGamerUrl = "https://api.rss2json.com/v1/api.json?rss_url=https://www.pcgamer.com/rss/";
+        
+        const [polygonRes, pcGamerRes] = await Promise.all([
+            fetch(polygonUrl).then(r => r.json()),
+            fetch(pcGamerUrl).then(r => r.json())
+        ]);
+        
+        let mergedItems = [];
+        if (polygonRes.status === "ok" && polygonRes.items) {
+            mergedItems.push(...polygonRes.items);
+        }
+        if (pcGamerRes.status === "ok" && pcGamerRes.items) {
+            mergedItems.push(...pcGamerRes.items);
+        }
+        
+        // Sort items by pubDate descending
+        mergedItems.sort((a, b) => {
+            const dateA = new Date(a.pubDate.replace(/-/g, "/"));
+            const dateB = new Date(b.pubDate.replace(/-/g, "/"));
+            return dateB - dateA;
+        });
+        
+        newsList = mergedItems;
+        
+    } catch (err) {
+        console.error("Error fetching news feeds:", err);
+    } finally {
+        isNewsLoading = false;
+        render();
+    }
+}
+
 // Render Cards
 function render() {
     const grid = document.getElementById("grid-section");
@@ -498,6 +589,76 @@ function render() {
     const sortFilter = document.getElementById("sort-filter").value;
 
     grid.innerHTML = "";
+
+    if (currentTab === "news") {
+        document.getElementById("add-btn").style.display = "none";
+        document.getElementById("export-btn").style.display = "none";
+        document.getElementById("import-btn").style.display = "none";
+        document.querySelector(".controls-section").style.display = "none";
+        
+        if (isNewsLoading) {
+            grid.innerHTML = `
+                <div class="news-loading-container" style="grid-column: 1 / -1; text-align: center; padding: 100px 0;">
+                    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255, 255, 255, 0.1); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s infinite linear;"></div>
+                    <p style="margin-top: 20px; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif;">Loading gaming feed...</p>
+                </div>
+            `;
+            return;
+        }
+        
+        if (newsList.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 50px 0; color: var(--text-secondary);">
+                    <h3 style="margin-bottom: 10px;">Failed to load news feed</h3>
+                    <p style="margin-bottom: 20px;">Please check your internet connection and try again.</p>
+                    <button id="retry-news-btn" class="btn btn-primary">🔄 Retry Connection</button>
+                </div>
+            `;
+            document.getElementById("retry-news-btn").addEventListener("click", loadNewsData);
+            return;
+        }
+        
+        newsList.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "card news-card";
+            
+            const image = (item.enclosure && item.enclosure.link) || item.thumbnail || "";
+            
+            let imageHtml = "";
+            if (image) {
+                imageHtml = `<img src="${image}" class="card-img" alt="${item.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`;
+            }
+            
+            const fallbackGradient = "background: linear-gradient(135deg, #111111 0%, #333333 100%);";
+            
+            card.innerHTML = `
+                <div class="card-img-container" style="${fallbackGradient}">
+                    ${imageHtml}
+                    <div class="card-fallback" style="display: ${image ? 'none' : 'flex'}">
+                        📰
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+                        By ${item.author || "Polygon"}
+                    </div>
+                    <h3 class="card-title" style="-webkit-line-clamp: 2; height: 48px; margin-bottom: 8px;">${item.title}</h3>
+                    <p class="card-notes" style="-webkit-line-clamp: 3; height: 54px; margin-bottom: 15px;">${item.description || 'No snippet preview available.'}</p>
+                    <div class="card-actions" style="margin-top: auto;">
+                        <a href="${item.link}" target="_blank" class="btn btn-primary btn-block" style="text-decoration: none; font-size: 13px; padding: 8px 12px; box-shadow: none;">Read Article ↗</a>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        
+        return;
+    }
+
+    document.getElementById("add-btn").style.display = "inline-flex";
+    document.getElementById("export-btn").style.display = "inline-flex";
+    document.getElementById("import-btn").style.display = "inline-flex";
+    document.querySelector(".controls-section").style.display = "flex";
 
     // Filter items
     let filtered = entertainmentList.filter(item => {
@@ -785,11 +946,16 @@ document.getElementById("sort-filter").addEventListener("change", render);
 
 // Tab switching
 document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click", async (e) => {
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
         e.target.classList.add("active");
         currentTab = e.target.getAttribute("data-tab");
-        render();
+        applyThemeForTab(currentTab);
+        if (currentTab === "news") {
+            await loadNewsData();
+        } else {
+            render();
+        }
     });
 });
 
