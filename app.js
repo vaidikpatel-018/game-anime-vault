@@ -775,6 +775,12 @@ function render() {
         btn.addEventListener("click", async (e) => {
             const deleteBtn = e.target.closest(".btn-delete");
             const id = deleteBtn.getAttribute("data-id");
+
+            if (currentUser && currentUser.email === "demo@example.com") {
+                showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
+                return;
+            }
+
             if (confirm("Are you sure you want to delete this item?")) {
                 deleteBtn.disabled = true;
 
@@ -960,6 +966,14 @@ document.getElementById("item-form").addEventListener("submit", async (e) => {
     submitBtn.innerText = "Saving...";
 
     if (id) {
+        if (currentUser && currentUser.email === "demo@example.com") {
+            showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Save Item";
+            modal.style.display = "none";
+            return;
+        }
+
         const { error } = await supabaseClient
             .from("vault_items")
             .update({ title, category, rating, month, year, image, notes })
@@ -1373,6 +1387,13 @@ document.getElementById("profile-avatar-file").addEventListener("change", (e) =>
 // Profile Settings Form Submission
 document.getElementById("profile-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    if (currentUser && currentUser.email === "demo@example.com") {
+        showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
+        profileDrawer.classList.remove("open");
+        return;
+    }
+
     const newUsername = document.getElementById("profile-username").value.trim();
     const submitBtn = e.target.querySelector("button[type='submit']");
     
