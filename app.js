@@ -1127,5 +1127,33 @@ document.getElementById("feedback-form").addEventListener("submit", async (e) =>
     submitBtn.innerText = "Submit Feedback";
     feedbackModal.style.display = "none";
     
-    alert("Thank you! Your feedback has been submitted.");
+    showToast("Thank you! Your feedback has been submitted.");
 });
+
+// Custom Toast Notification System
+function showToast(message, isSuccess = true) {
+    const existing = document.querySelector(".custom-toast");
+    if (existing) {
+        existing.remove();
+    }
+
+    const toast = document.createElement("div");
+    toast.className = "custom-toast";
+    toast.innerHTML = `
+        <span class="toast-icon">${isSuccess ? '✅' : '❌'}</span>
+        <span class="toast-message">${message}</span>
+    `;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add("show");
+    }, 10);
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
