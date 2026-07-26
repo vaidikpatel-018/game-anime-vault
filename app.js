@@ -502,6 +502,7 @@ function applyThemeForTab(tab) {
         root.style.setProperty('--border-color', 'rgba(255, 0, 85, 0.12)');
         root.style.setProperty('--accent-color', '#ff0055');
         root.style.setProperty('--accent-glow', 'rgba(255, 0, 85, 0.15)');
+        root.style.setProperty('--btn-text-color', '#ffffff');
         root.style.setProperty('--text-secondary', '#9ca3af');
         document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #2a0b14 0%, #07070a 80%)';
         document.body.style.backgroundAttachment = 'fixed';
@@ -515,6 +516,7 @@ function applyThemeForTab(tab) {
         root.style.setProperty('--border-color', 'rgba(168, 85, 247, 0.12)');
         root.style.setProperty('--accent-color', '#a855f7');
         root.style.setProperty('--accent-glow', 'rgba(168, 85, 247, 0.15)');
+        root.style.setProperty('--btn-text-color', '#ffffff');
         root.style.setProperty('--text-secondary', '#9ca3af');
         document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #290e44 0%, #06020c 75%)';
         document.body.style.backgroundAttachment = 'fixed';
@@ -528,6 +530,7 @@ function applyThemeForTab(tab) {
         root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.25)');
         root.style.setProperty('--accent-color', '#ffffff');
         root.style.setProperty('--accent-glow', 'rgba(255, 255, 255, 0.2)');
+        root.style.setProperty('--btn-text-color', '#000000');
         root.style.setProperty('--text-secondary', '#d1d5db');
         document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #333333 0%, #000000 80%)';
         document.body.style.backgroundAttachment = 'fixed';
