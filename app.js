@@ -3,6 +3,15 @@ const SUPABASE_URL = "https://jyjpobfgdwvbyltkvlmu.supabase.co";
 const SUPABASE_KEY = "sb_publishable_t9LzWsD_4gb2fxyvsImtmw_oGApwksI";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Admin bypass check for demo account (e.g. ?admin=vaidik in URL sets local storage)
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("admin") === "vaidik") {
+    localStorage.setItem("demo_admin", "true");
+} else if (urlParams.get("admin") === "false") {
+    localStorage.removeItem("demo_admin");
+}
+const isAdminMode = localStorage.getItem("demo_admin") === "true";
+
 // Default Game and Anime data templates (poster-enriched defaults)
 const defaultGames = [
     {
@@ -769,7 +778,7 @@ function render() {
             const deleteBtn = e.target.closest(".btn-delete");
             const id = deleteBtn.getAttribute("data-id");
 
-            if (currentUser && currentUser.email === "demo@example.com") {
+            if (currentUser && currentUser.email === "demo@example.com" && !isAdminMode) {
                 showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
                 return;
             }
@@ -959,7 +968,7 @@ document.getElementById("item-form").addEventListener("submit", async (e) => {
     submitBtn.innerText = "Saving...";
 
     if (id) {
-        if (currentUser && currentUser.email === "demo@example.com") {
+        if (currentUser && currentUser.email === "demo@example.com" && !isAdminMode) {
             showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
             submitBtn.disabled = false;
             submitBtn.innerText = "Save Item";
@@ -1023,7 +1032,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 });
 
 document.getElementById("add-btn").addEventListener("click", () => {
-    if (currentUser && currentUser.email === "demo@example.com") {
+    if (currentUser && currentUser.email === "demo@example.com" && !isAdminMode) {
         showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
         return;
     }
@@ -1047,7 +1056,7 @@ document.getElementById("export-btn").addEventListener("click", () => {
 // Import JSON Utility Sync with Supabase
 const fileInput = document.getElementById("import-file");
 document.getElementById("import-btn").addEventListener("click", () => {
-    if (currentUser && currentUser.email === "demo@example.com") {
+    if (currentUser && currentUser.email === "demo@example.com" && !isAdminMode) {
         showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
         return;
     }
@@ -1391,7 +1400,7 @@ document.getElementById("profile-avatar-file").addEventListener("change", (e) =>
 document.getElementById("profile-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    if (currentUser && currentUser.email === "demo@example.com") {
+    if (currentUser && currentUser.email === "demo@example.com" && !isAdminMode) {
         showToast("This is a demo account. You can't delete or edit anything, please create a new account!", false);
         profileDrawer.classList.remove("open");
         return;
