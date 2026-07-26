@@ -598,6 +598,8 @@ function render() {
         document.getElementById("export-btn").style.display = "none";
         document.getElementById("import-btn").style.display = "none";
         document.querySelector(".controls-section").style.display = "none";
+        const statsSummary = document.getElementById("stats-summary");
+        if (statsSummary) statsSummary.style.display = "none";
         
         if (isNewsLoading) {
             grid.innerHTML = `
@@ -670,6 +672,13 @@ function render() {
         const matchesYear = yearFilter === "all" ? true : item.year.toString() === yearFilter;
         return matchesTab && matchesSearch && matchesYear;
     });
+
+    const statsSummary = document.getElementById("stats-summary");
+    if (statsSummary) {
+        statsSummary.style.display = "block";
+        const categoryLabel = currentTab === "games" ? "Games" : "Anime Series";
+        statsSummary.innerHTML = `Total ${categoryLabel}: <span style="color: var(--accent-color); font-weight: 800;">${filtered.length}</span>`;
+    }
 
     // Sorting
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
