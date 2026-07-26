@@ -3,13 +3,7 @@ const SUPABASE_URL = "https://jyjpobfgdwvbyltkvlmu.supabase.co";
 const SUPABASE_KEY = "sb_publishable_t9LzWsD_4gb2fxyvsImtmw_oGApwksI";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Admin bypass check for demo account (e.g. ?admin=vaidik in URL sets local storage)
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get("admin") === "vaidik") {
-    localStorage.setItem("demo_admin", "true");
-} else if (urlParams.get("admin") === "false") {
-    localStorage.removeItem("demo_admin");
-}
+// Admin bypass check for demo account (can be enabled via browser console: localStorage.setItem("demo_admin", "true"))
 const isAdminMode = localStorage.getItem("demo_admin") === "true";
 
 // Default Game and Anime data templates (poster-enriched defaults)
