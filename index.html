@@ -160,6 +160,20 @@
 
                 <button type="submit" class="btn btn-primary btn-block">Save Item</button>
             </form>
+    </div>
+
+    <!-- Glassmorphic Modal for Feedback/Suggestions -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-feedback-modal">&times;</span>
+            <h2>Send Feedback / Report Issue</h2>
+            <form id="feedback-form">
+                <div class="form-group">
+                    <label for="feedback-text">Write your suggestion or issue here*</label>
+                    <textarea id="feedback-text" rows="5" required placeholder="Write here..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit Feedback</button>
+            </form>
         </div>
     </div>
 
@@ -168,7 +182,7 @@
             <div class="footer-left">
                 <span>Made with ❤️ in India | Co-developed with AI</span>
                 <span class="footer-divider">|</span>
-                <a href="mailto:patelvaidik2232@gmail.com" class="footer-feedback">Report Issues / Suggestions</a>
+                <a href="#" id="feedback-trigger" class="footer-feedback">Report Issues / Suggestions</a>
             </div>
             <div class="footer-right">
                 <!-- Instagram -->
@@ -238,6 +252,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=7"></script>
 </body>
 </html>

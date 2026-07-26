@@ -1073,3 +1073,67 @@ fileInput.addEventListener("change", async (e) => {
     };
     reader.readAsText(file);
 });
+
+// Feedback Modal Handling & Form Submission (with Supabase sync & mailto fallback)
+const feedbackModal = document.getElementById("feedback-modal");
+const closeFeedbackModal = document.querySelector(".close-feedback-modal");
+const feedbackTrigger = document.getElementById("feedback-trigger");
+
+if (feedbackTrigger) {
+    feedbackTrigger.addEventListener("click", (e) => {
+        e.preventDefault();
+        feedbackModal.style.display = "flex";
+        document.getElementById("feedback-form").reset();
+    });
+}
+
+if (closeFeedbackModal) {
+    closeFeedbackModal.addEventListener("click", () => {
+        feedbackModal.style.display = "none";
+    });
+}
+
+window.addEventListener("click", (e) => {
+    if (e.target === feedbackModal) {
+        feedbackModal.style.display = "none";
+    }
+});
+
+document.getElementById("feedback-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const feedbackText = document.getElementById("feedback-text").value.trim();
+    const submitBtn = e.target.querySelector("button[type='submit']");
+    
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+    
+    let success = false;
+    try {
+        const { error } = await supabaseClient
+            .from("feedback")
+            .insert([{
+                user_id: currentUser ? currentUser.id : null,
+                email: currentUser ? currentUser.email : "anonymous",
+                message: feedbackText
+            }]);
+        
+        if (!error) {
+            success = true;
+        }
+    } catch (err) {
+        console.error("Supabase feedback insert error:", err);
+    }
+    
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Submit Feedback";
+    feedbackModal.style.display = "none";
+    
+    if (success) {
+        alert("Thank you for your feedback! It has been submitted.");
+    } else {
+        alert("Connecting to mail client to send your feedback...");
+        const subject = encodeURIComponent("Feedback / Bug Report - Game & Anime Vault");
+        const body = encodeURIComponent(feedbackText);
+        window.location.href = `mailto:patelvaidik2232@gmail.com?subject=${subject}&body=${body}`;
+    }
+});

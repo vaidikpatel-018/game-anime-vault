@@ -397,7 +397,7 @@ header .container {
     to { transform: translateY(0); opacity: 1; }
 }
 
-.close-modal {
+.close-modal, .close-feedback-modal {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -407,7 +407,7 @@ header .container {
     transition: color 0.2s;
 }
 
-.close-modal:hover {
+.close-modal:hover, .close-feedback-modal:hover {
     color: var(--text-primary);
 }
 
