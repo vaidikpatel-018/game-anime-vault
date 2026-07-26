@@ -791,6 +791,23 @@ function render() {
             }
         });
     });
+
+    // Attach card click listener to open Detail Modal
+    document.querySelectorAll(".card").forEach(cardDiv => {
+        cardDiv.addEventListener("click", (e) => {
+            // Ignore clicks if clicked on an action button inside the card overlay
+            if (e.target.closest(".btn-action")) {
+                return;
+            }
+            const editBtn = cardDiv.querySelector(".btn-edit");
+            if (!editBtn) return; // Ignore placeholders
+            const id = editBtn.getAttribute("data-id");
+            const item = entertainmentList.find(item => item.id === id);
+            if (item) {
+                openDetailModal(item);
+            }
+        });
+    });
 }
 
 // Modal handling and Image Upload Compression
@@ -1179,3 +1196,60 @@ function showToast(message, isSuccess = true) {
         }, 300);
     }, 3000);
 }
+
+// Glassmorphic Detail View Modal Logic
+const detailModal = document.getElementById("detail-modal");
+const closeDetailModal = document.querySelector(".close-detail-modal");
+const detailCloseBtn = document.getElementById("detail-close-btn");
+
+function openDetailModal(item) {
+    document.getElementById("detail-title").innerText = item.title;
+    document.getElementById("detail-rating").innerHTML = "⭐".repeat(item.rating);
+    document.getElementById("detail-category-badge").innerText = item.category === "games" ? "Game" : "Anime";
+    document.getElementById("detail-date-badge").innerText = `${item.month} ${item.year}`;
+    document.getElementById("detail-notes").innerText = item.notes || "No review notes written yet.";
+    
+    const poster = document.getElementById("detail-poster");
+    const fallback = document.getElementById("detail-poster-fallback");
+    
+    if (item.image) {
+        poster.src = item.image;
+        poster.style.display = "block";
+        fallback.style.display = "none";
+    } else {
+        poster.src = "";
+        poster.style.display = "none";
+        fallback.style.display = "flex";
+        fallback.innerText = item.title.substring(0, 2).toUpperCase();
+    }
+    
+    document.getElementById("detail-edit-btn").setAttribute("data-id", item.id);
+    detailModal.style.display = "flex";
+}
+
+if (closeDetailModal) {
+    closeDetailModal.addEventListener("click", () => {
+        detailModal.style.display = "none";
+    });
+}
+
+if (detailCloseBtn) {
+    detailCloseBtn.addEventListener("click", () => {
+        detailModal.style.display = "none";
+    });
+}
+
+window.addEventListener("click", (e) => {
+    if (e.target === detailModal) {
+        detailModal.style.display = "none";
+    }
+});
+
+document.getElementById("detail-edit-btn").addEventListener("click", () => {
+    const id = document.getElementById("detail-edit-btn").getAttribute("data-id");
+    const item = entertainmentList.find(item => item.id === id);
+    if (item) {
+        detailModal.style.display = "none";
+        openModal(item);
+    }
+});

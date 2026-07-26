@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="style.css?v=12">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
 </head>
 <body>
@@ -181,6 +181,33 @@
         </div>
     </div>
 
+    <!-- Glassmorphic Detail View Modal -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-content detail-modal-content">
+            <span class="close-detail-modal">&times;</span>
+            <div class="detail-poster-container">
+                <img id="detail-poster" src="" alt="Poster" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div id="detail-poster-fallback" class="detail-fallback">GP</div>
+            </div>
+            <div class="detail-info">
+                <h2 id="detail-title">Game Title</h2>
+                <div id="detail-rating" class="card-rating">⭐⭐⭐⭐⭐</div>
+                <div class="detail-meta">
+                    <span id="detail-category-badge" class="badge">GAME</span>
+                    <span id="detail-date-badge" class="badge">March 2026</span>
+                </div>
+                <div class="detail-notes-section">
+                    <h3>Review Notes</h3>
+                    <p id="detail-notes">Notes go here...</p>
+                </div>
+                <div style="margin-top: 25px; display: flex; gap: 12px;">
+                    <button id="detail-edit-btn" class="btn btn-primary" style="flex: 1;">✏️ Edit Details</button>
+                    <button id="detail-close-btn" class="btn btn-secondary" style="flex: 1;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-container">
             <div class="footer-left">
@@ -250,6 +277,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
 </body>
 </html>
