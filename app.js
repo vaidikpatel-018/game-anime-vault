@@ -508,6 +508,19 @@ function getGlowStyle(title) {
     return `background: linear-gradient(135deg, hsl(${h1}, 70%, 15%) 0%, hsl(${h2}, 80%, 25%) 100%);`;
 }
 
+// Render rating stars as SVG icons (completely emoji-free)
+function renderStars(rating) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            html += `<svg viewBox="0 0 24 24" class="star-icon filled" style="width: 14px; height: 14px; fill: var(--accent-color); stroke: var(--accent-color); display: inline-block; margin-right: 2px;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+        } else {
+            html += `<svg viewBox="0 0 24 24" class="star-icon" style="width: 14px; height: 14px; fill: none; stroke: var(--text-secondary); stroke-width: 1.5; display: inline-block; margin-right: 2px;"><path d="M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"/></svg>`;
+        }
+    }
+    return html;
+}
+
 let newsList = [];
 let isNewsLoading = false;
 let itemToDeleteId = null;
@@ -515,37 +528,37 @@ let itemToDeleteId = null;
 function applyThemeForTab(tab) {
     const root = document.documentElement;
     if (tab === "games") {
-        root.style.setProperty('--bg-color', '#07070a');
-        root.style.setProperty('--card-bg', 'rgba(18, 12, 16, 0.65)');
-        root.style.setProperty('--border-color', 'rgba(255, 0, 85, 0.12)');
-        root.style.setProperty('--accent-color', '#ff0055');
-        root.style.setProperty('--accent-glow', 'rgba(255, 0, 85, 0.15)');
+        root.style.setProperty('--bg-color', '#090809');
+        root.style.setProperty('--card-bg', 'rgba(22, 20, 21, 0.65)');
+        root.style.setProperty('--border-color', 'rgba(191, 59, 87, 0.15)');
+        root.style.setProperty('--accent-color', '#bf3b57');
+        root.style.setProperty('--accent-glow', 'rgba(191, 59, 87, 0.15)');
         root.style.setProperty('--btn-text-color', '#ffffff');
         root.style.setProperty('--text-secondary', '#9ca3af');
-        root.style.setProperty('--glow-color', 'rgba(255, 0, 85, 0.18)');
-        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #2a0b14 0%, #07070a 80%)';
+        root.style.setProperty('--glow-color', 'rgba(191, 59, 87, 0.12)');
+        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #1f0f13 0%, #090809 80%)';
         document.body.style.backgroundAttachment = 'fixed';
     } else if (tab === "anime") {
-        root.style.setProperty('--bg-color', '#06020c');
-        root.style.setProperty('--card-bg', 'rgba(18, 9, 29, 0.55)');
-        root.style.setProperty('--border-color', 'rgba(168, 85, 247, 0.12)');
-        root.style.setProperty('--accent-color', '#a855f7');
-        root.style.setProperty('--accent-glow', 'rgba(168, 85, 247, 0.15)');
+        root.style.setProperty('--bg-color', '#07060a');
+        root.style.setProperty('--card-bg', 'rgba(20, 18, 25, 0.65)');
+        root.style.setProperty('--border-color', 'rgba(122, 102, 179, 0.15)');
+        root.style.setProperty('--accent-color', '#7a66b3');
+        root.style.setProperty('--accent-glow', 'rgba(122, 102, 179, 0.15)');
         root.style.setProperty('--btn-text-color', '#ffffff');
         root.style.setProperty('--text-secondary', '#9ca3af');
-        root.style.setProperty('--glow-color', 'rgba(168, 85, 247, 0.18)');
-        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #290e44 0%, #06020c 75%)';
+        root.style.setProperty('--glow-color', 'rgba(122, 102, 179, 0.12)');
+        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #100d1c 0%, #06050a 80%)';
         document.body.style.backgroundAttachment = 'fixed';
     } else if (tab === "news") {
-        root.style.setProperty('--bg-color', '#000000');
-        root.style.setProperty('--card-bg', 'rgba(30, 30, 30, 0.8)');
-        root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.25)');
-        root.style.setProperty('--accent-color', '#ffffff');
-        root.style.setProperty('--accent-glow', 'rgba(255, 255, 255, 0.2)');
-        root.style.setProperty('--btn-text-color', '#000000');
-        root.style.setProperty('--text-secondary', '#d1d5db');
-        root.style.setProperty('--glow-color', 'rgba(255, 255, 255, 0.08)');
-        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #333333 0%, #000000 80%)';
+        root.style.setProperty('--bg-color', '#08090a');
+        root.style.setProperty('--card-bg', 'rgba(24, 27, 30, 0.65)');
+        root.style.setProperty('--border-color', 'rgba(107, 130, 150, 0.15)');
+        root.style.setProperty('--accent-color', '#6b8296');
+        root.style.setProperty('--accent-glow', 'rgba(107, 130, 150, 0.15)');
+        root.style.setProperty('--btn-text-color', '#ffffff');
+        root.style.setProperty('--text-secondary', '#9ca3af');
+        root.style.setProperty('--glow-color', 'rgba(107, 130, 150, 0.12)');
+        document.body.style.background = 'radial-gradient(ellipse at 50% -20%, #11161b 0%, #07080a 80%)';
         document.body.style.backgroundAttachment = 'fixed';
     }
 }
@@ -625,7 +638,7 @@ function render() {
                 <div style="grid-column: 1 / -1; text-align: center; padding: 50px 0; color: var(--text-secondary);">
                     <h3 style="margin-bottom: 10px;">Failed to load news feed</h3>
                     <p style="margin-bottom: 20px;">Please check your internet connection and try again.</p>
-                    <button id="retry-news-btn" class="btn btn-primary">🔄 Retry Connection</button>
+                    <button id="retry-news-btn" class="btn btn-primary">Retry Connection</button>
                 </div>
             `;
             document.getElementById("retry-news-btn").addEventListener("click", loadNewsData);
@@ -649,7 +662,7 @@ function render() {
                 <div class="card-img-container" style="${fallbackGradient}">
                     ${imageHtml}
                     <div class="card-fallback" style="display: ${image ? 'none' : 'flex'}">
-                        📰
+                        NEWS
                     </div>
                 </div>
                 <div class="card-content">
@@ -711,7 +724,7 @@ function render() {
         const card = document.createElement("div");
         card.className = "card";
         
-        let stars = "⭐".repeat(item.rating);
+        let stars = renderStars(item.rating);
         
         let imageHtml = "";
         if (item.image) {
@@ -759,7 +772,11 @@ function render() {
         const placeholder = document.createElement("div");
         placeholder.className = "empty-vault-state";
         placeholder.innerHTML = `
-            <div class="empty-state-icon">📂</div>
+            <div class="empty-state-icon" style="margin-bottom: 15px;">
+                <svg viewBox="0 0 24 24" width="48" height="48" stroke="var(--text-secondary)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; display: inline-block;">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
             <h3>Your Vault is empty</h3>
             <p>You haven't logged any ${currentTab === 'games' ? 'games' : 'anime series'} for the selected filters. Let's create your first record!</p>
             <button class="btn btn-primary" onclick="document.getElementById('add-btn').click()">+ Add First Log</button>
@@ -1203,7 +1220,12 @@ function showToast(message, isSuccess = true) {
     const toast = document.createElement("div");
     toast.className = "custom-toast";
     toast.innerHTML = `
-        <span class="toast-icon">${isSuccess ? '✅' : '❌'}</span>
+        <span class="toast-icon" style="display: inline-flex; align-items: center; justify-content: center; margin-right: 8px;">
+            ${isSuccess ? 
+                `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` : 
+                `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#ef4444" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`
+            }
+        </span>
         <span class="toast-message">${message}</span>
     `;
 
@@ -1228,7 +1250,7 @@ const detailCloseBtn = document.getElementById("detail-close-btn");
 
 function openDetailModal(item) {
     document.getElementById("detail-title").innerText = item.title;
-    document.getElementById("detail-rating").innerHTML = "⭐".repeat(item.rating);
+    document.getElementById("detail-rating").innerHTML = renderStars(item.rating);
     document.getElementById("detail-category-badge").innerText = item.category === "games" ? "Game" : "Anime";
     document.getElementById("detail-date-badge").innerText = `${item.month} ${item.year}`;
     document.getElementById("detail-notes").innerText = item.notes || "No review notes written yet.";
