@@ -340,10 +340,18 @@ function setAuthMode(mode) {
     const subtitle = document.getElementById("auth-subtitle");
     const submitBtn = document.getElementById("auth-submit-btn");
     const toggleLink = document.getElementById("auth-toggle-link");
-    const toggleText = toggleLink.parentNode;
+    const toggleText = toggleLink ? toggleLink.parentNode : document.querySelector(".auth-toggle-text");
     const errorDiv = document.getElementById("auth-error-msg");
     const usernameGroup = document.getElementById("username-group");
     const authUsernameInput = document.getElementById("auth-username");
+    const emailGroup = document.getElementById("email-group");
+    const authEmailInput = document.getElementById("auth-email");
+    const passwordGroup = document.getElementById("password-group");
+    const authPasswordInput = document.getElementById("auth-password");
+    const passwordLabel = document.getElementById("password-label");
+    const forgotLink = document.getElementById("auth-forgot-link");
+    const demoBadge = document.querySelector(".demo-badge");
+    const featuresPreview = document.querySelector(".auth-features-preview");
     
     errorDiv.style.display = "none";
     
@@ -352,29 +360,116 @@ function setAuthMode(mode) {
         submitBtn.innerText = "Log In";
         usernameGroup.style.display = "none";
         authUsernameInput.removeAttribute("required");
+        
+        emailGroup.style.display = "block";
+        authEmailInput.setAttribute("required", "true");
+        
+        passwordGroup.style.display = "block";
+        authPasswordInput.setAttribute("required", "true");
+        authPasswordInput.placeholder = "••••••••";
+        if (passwordLabel) passwordLabel.innerText = "Password";
+        if (forgotLink) forgotLink.style.display = "inline";
+        
+        if (demoBadge) demoBadge.style.display = "block";
+        if (featuresPreview) featuresPreview.style.display = "block";
+        
         toggleText.innerHTML = `Don't have an account? <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Sign Up</a>`;
-    } else {
+    } else if (authMode === "signup") {
         subtitle.innerText = "Create a new account to sync your lists across devices";
         submitBtn.innerText = "Create Account";
         usernameGroup.style.display = "block";
         authUsernameInput.setAttribute("required", "true");
+        
+        emailGroup.style.display = "block";
+        authEmailInput.setAttribute("required", "true");
+        
+        passwordGroup.style.display = "block";
+        authPasswordInput.setAttribute("required", "true");
+        authPasswordInput.placeholder = "••••••••";
+        if (passwordLabel) passwordLabel.innerText = "Password";
+        if (forgotLink) forgotLink.style.display = "none";
+        
+        if (demoBadge) demoBadge.style.display = "block";
+        if (featuresPreview) featuresPreview.style.display = "block";
+        
         toggleText.innerHTML = `Already have an account? <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Log In</a>`;
+    } else if (authMode === "forgot_password") {
+        subtitle.innerText = "Enter your email address to receive a password reset link";
+        submitBtn.innerText = "Send Reset Link";
+        usernameGroup.style.display = "none";
+        authUsernameInput.removeAttribute("required");
+        
+        emailGroup.style.display = "block";
+        authEmailInput.setAttribute("required", "true");
+        
+        passwordGroup.style.display = "none";
+        authPasswordInput.removeAttribute("required");
+        
+        if (demoBadge) demoBadge.style.display = "none";
+        if (featuresPreview) featuresPreview.style.display = "none";
+        
+        toggleText.innerHTML = `Back to <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Log In</a>`;
+    } else if (authMode === "reset_password") {
+        subtitle.innerText = "Enter a new secure password for your account";
+        submitBtn.innerText = "Update Password";
+        usernameGroup.style.display = "none";
+        authUsernameInput.removeAttribute("required");
+        
+        emailGroup.style.display = "none";
+        authEmailInput.removeAttribute("required");
+        
+        passwordGroup.style.display = "block";
+        authPasswordInput.setAttribute("required", "true");
+        authPasswordInput.placeholder = "Enter new password";
+        if (passwordLabel) passwordLabel.innerText = "New Password";
+        if (forgotLink) forgotLink.style.display = "none";
+        
+        if (demoBadge) demoBadge.style.display = "none";
+        if (featuresPreview) featuresPreview.style.display = "none";
+        
+        toggleText.innerHTML = `Cancel and <a href="#" id="auth-toggle-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Log In</a>`;
     }
     
     // Re-attach listener since we modified innerHTML
-    document.getElementById("auth-toggle-link").addEventListener("click", (e) => {
+    const newToggleLink = document.getElementById("auth-toggle-link");
+    if (newToggleLink) {
+        newToggleLink.addEventListener("click", async (e) => {
+            e.preventDefault();
+            if (authMode === "reset_password") {
+                await supabaseClient.auth.signOut();
+            } else if (authMode === "forgot_password") {
+                setAuthMode("login");
+            } else {
+                setAuthMode(authMode === "login" ? "signup" : "login");
+            }
+        });
+    }
+}
+
+// Attach initial listeners
+const toggleLink = document.getElementById("auth-toggle-link");
+if (toggleLink) {
+    toggleLink.addEventListener("click", async (e) => {
         e.preventDefault();
-        setAuthMode(authMode === "login" ? "signup" : "login");
+        if (authMode === "reset_password") {
+            await supabaseClient.auth.signOut();
+        } else if (authMode === "forgot_password") {
+            setAuthMode("login");
+        } else {
+            setAuthMode(authMode === "login" ? "signup" : "login");
+        }
     });
 }
 
-// Attach initial auth toggle listener
-document.getElementById("auth-toggle-link").addEventListener("click", (e) => {
-    e.preventDefault();
-    setAuthMode(authMode === "login" ? "signup" : "login");
-});
+const forgotLink = document.getElementById("auth-forgot-link");
+if (forgotLink) {
+    forgotLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        setAuthMode("forgot_password");
+    });
+}
 
-// Auth Form Submission (Handles both Login and Sign Up)
+// Auth Form Submission (Handles Login, Sign Up, Forgot Password, and Reset Password)
 document.getElementById("auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("auth-email").value.trim();
@@ -398,7 +493,7 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
             submitBtn.innerText = "Log In";
             submitBtn.disabled = false;
         }
-    } else {
+    } else if (authMode === "signup") {
         submitBtn.innerText = "Creating account...";
         const username = document.getElementById("auth-username").value.trim();
         const { data, error } = await supabaseClient.auth.signUp({
@@ -418,7 +513,47 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
             submitBtn.innerText = "Create Account";
             submitBtn.disabled = false;
         } else {
-            alert("Account created successfully! You are now logged in.");
+            showToast("Account created successfully! You are now logged in.");
+        }
+    } else if (authMode === "forgot_password") {
+        submitBtn.innerText = "Sending link...";
+        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin
+        });
+
+        if (error) {
+            errorDiv.innerText = error.message;
+            errorDiv.style.display = "block";
+            submitBtn.innerText = "Send Reset Link";
+            submitBtn.disabled = false;
+        } else {
+            showToast("A password reset link has been sent to your email address!");
+            setAuthMode("login");
+            submitBtn.disabled = false;
+        }
+    } else if (authMode === "reset_password") {
+        submitBtn.innerText = "Updating password...";
+        const { data, error } = await supabaseClient.auth.updateUser({
+            password: password
+        });
+
+        if (error) {
+            errorDiv.innerText = error.message;
+            errorDiv.style.display = "block";
+            submitBtn.innerText = "Update Password";
+            submitBtn.disabled = false;
+        } else {
+            showToast("Your password has been updated successfully!");
+            submitBtn.disabled = false;
+            authMode = "login"; // reset mode
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                currentUser = user;
+                showAppScreen(user);
+                await loadUserData();
+            } else {
+                showAuthScreen();
+            }
         }
     }
 });
@@ -430,7 +565,17 @@ document.getElementById("profile-logout-btn").addEventListener("click", async ()
 
 // Listen for Auth Changes
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    if (session) {
+    console.log("Auth State Changed Event:", event);
+    if (event === "PASSWORD_RECOVERY") {
+        currentUser = session ? session.user : null;
+        document.getElementById("app-container").style.display = "none";
+        document.getElementById("auth-container").style.display = "flex";
+        setAuthMode("reset_password");
+    } else if (session) {
+        if (authMode === "reset_password") {
+            currentUser = session.user;
+            return;
+        }
         currentUser = session.user;
         showAppScreen(currentUser);
         await loadUserData();

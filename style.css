@@ -456,6 +456,8 @@ label {
 
 input[type="text"],
 input[type="url"],
+input[type="email"],
+input[type="password"],
 select,
 textarea {
     width: 100%;
