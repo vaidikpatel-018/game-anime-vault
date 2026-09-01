@@ -35,7 +35,7 @@
 
 | Commit | Summary |
 | :--- | :--- |
-| `HEAD` | `fix`: resolve auth screen transition without requiring manual browser refresh |
+| `7f5e3e3` | `fix`: resolve auth screen transition without requiring manual browser refresh |
 | `0a91fc6` | `feat`: add password visibility toggle, username login support, and performance optimizations |
 | `be2beb7` | `feat`: add forgot and reset password flow using Supabase |
 | `6470526` | `style`: remove emojis, clean up AI slop, and apply mature color palettes |
