@@ -35,6 +35,7 @@
 
 | Commit | Summary |
 | :--- | :--- |
+| `0a91fc6` | `feat`: add password visibility toggle, username login support, and performance optimizations |
 | `be2beb7` | `feat`: add forgot and reset password flow using Supabase |
 | `6470526` | `style`: remove emojis, clean up AI slop, and apply mature color palettes |
 | `fb730f4` | `style`: add `.gitattributes` to force linguist to detect `app.js` in repo statistics |
@@ -66,4 +67,4 @@
   - [x] Added password visibility toggle button with eye open/close SVG icons in login, signup, and reset password views
   - [x] Enabled login using either email address or username with automatic mapping and local caching
 - [x] Local testing & code review
-- [ ] Git commit & push to `origin/main`
+- [x] Git commit & push to `origin/main`
