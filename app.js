@@ -319,6 +319,69 @@ let entertainmentList = [];
 let currentUser = null;
 let authMode = "login"; // "login" or "signup"
 
+// Local Cache Synchronization Utilities (Instant 0ms App Startup)
+function saveUserToCache(user) {
+    if (!user) return;
+    try {
+        localStorage.setItem("vault_cached_user", JSON.stringify(user));
+    } catch (e) {
+        console.warn("Could not cache user:", e);
+    }
+}
+
+function clearUserCache() {
+    try {
+        localStorage.removeItem("vault_cached_user");
+    } catch (e) {}
+}
+
+function saveItemsToCache(userId, items) {
+    if (!userId || !Array.isArray(items)) return;
+    try {
+        localStorage.setItem("vault_cached_items_" + userId, JSON.stringify(items));
+    } catch (e) {
+        console.warn("Could not cache items:", e);
+    }
+}
+
+function getCachedItems(userId) {
+    if (!userId) return [];
+    try {
+        const str = localStorage.getItem("vault_cached_items_" + userId);
+        return str ? JSON.parse(str) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+// Username-to-Email Mapping for flexible login
+function getUsernameMap() {
+    const defaultMap = {
+        "demo": "demo@example.com",
+        "vaidik": "patelvaidik2232@gmail.com",
+        "vaidikpatel": "patelvaidik2232@gmail.com",
+        "vaidikpatel-018": "patelvaidik2232@gmail.com"
+    };
+    try {
+        const stored = localStorage.getItem("vault_username_map");
+        if (stored) {
+            return Object.assign(defaultMap, JSON.parse(stored));
+        }
+    } catch (e) {}
+    return defaultMap;
+}
+
+function registerUsernameMapping(username, email) {
+    if (!username || !email) return;
+    try {
+        const map = getUsernameMap();
+        map[username.toLowerCase().trim()] = email.toLowerCase().trim();
+        localStorage.setItem("vault_username_map", JSON.stringify(map));
+    } catch (e) {
+        console.warn("Could not save username mapping:", e);
+    }
+}
+
 // Auth Screen Toggling
 function showAuthScreen() {
     document.getElementById("app-container").style.display = "none";
@@ -345,6 +408,7 @@ function setAuthMode(mode) {
     const usernameGroup = document.getElementById("username-group");
     const authUsernameInput = document.getElementById("auth-username");
     const emailGroup = document.getElementById("email-group");
+    const emailLabel = document.getElementById("email-label");
     const authEmailInput = document.getElementById("auth-email");
     const passwordGroup = document.getElementById("password-group");
     const authPasswordInput = document.getElementById("auth-password");
@@ -352,8 +416,17 @@ function setAuthMode(mode) {
     const forgotLink = document.getElementById("auth-forgot-link");
     const demoBadge = document.querySelector(".demo-badge");
     const featuresPreview = document.querySelector(".auth-features-preview");
+    const eyeIconShow = document.getElementById("eye-icon-show");
+    const eyeIconHide = document.getElementById("eye-icon-hide");
     
     errorDiv.style.display = "none";
+
+    // Reset password visibility to hidden on mode change
+    if (authPasswordInput) {
+        authPasswordInput.setAttribute("type", "password");
+    }
+    if (eyeIconShow) eyeIconShow.style.display = "block";
+    if (eyeIconHide) eyeIconHide.style.display = "none";
     
     if (authMode === "login") {
         subtitle.innerText = "Log in to manage your private gaming logs & watch lists";
@@ -362,7 +435,10 @@ function setAuthMode(mode) {
         authUsernameInput.removeAttribute("required");
         
         emailGroup.style.display = "block";
+        if (emailLabel) emailLabel.innerText = "Email or Username";
+        authEmailInput.setAttribute("type", "text");
         authEmailInput.setAttribute("required", "true");
+        authEmailInput.placeholder = "Enter email address or username";
         
         passwordGroup.style.display = "block";
         authPasswordInput.setAttribute("required", "true");
@@ -381,7 +457,10 @@ function setAuthMode(mode) {
         authUsernameInput.setAttribute("required", "true");
         
         emailGroup.style.display = "block";
+        if (emailLabel) emailLabel.innerText = "Email Address";
+        authEmailInput.setAttribute("type", "email");
         authEmailInput.setAttribute("required", "true");
+        authEmailInput.placeholder = "name@example.com";
         
         passwordGroup.style.display = "block";
         authPasswordInput.setAttribute("required", "true");
@@ -400,7 +479,10 @@ function setAuthMode(mode) {
         authUsernameInput.removeAttribute("required");
         
         emailGroup.style.display = "block";
+        if (emailLabel) emailLabel.innerText = "Email Address";
+        authEmailInput.setAttribute("type", "email");
         authEmailInput.setAttribute("required", "true");
+        authEmailInput.placeholder = "name@example.com";
         
         passwordGroup.style.display = "none";
         authPasswordInput.removeAttribute("required");
@@ -446,6 +528,31 @@ function setAuthMode(mode) {
     }
 }
 
+// Password Visibility Toggle Listener
+const togglePasswordBtn = document.getElementById("toggle-password-btn");
+if (togglePasswordBtn) {
+    togglePasswordBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const pwdInput = document.getElementById("auth-password");
+        const eyeShow = document.getElementById("eye-icon-show");
+        const eyeHide = document.getElementById("eye-icon-hide");
+        if (!pwdInput) return;
+
+        const isCurrentlyPassword = pwdInput.getAttribute("type") === "password";
+        if (isCurrentlyPassword) {
+            pwdInput.setAttribute("type", "text");
+            if (eyeShow) eyeShow.style.display = "none";
+            if (eyeHide) eyeHide.style.display = "block";
+            togglePasswordBtn.setAttribute("title", "Hide Password");
+        } else {
+            pwdInput.setAttribute("type", "password");
+            if (eyeShow) eyeShow.style.display = "block";
+            if (eyeHide) eyeHide.style.display = "none";
+            togglePasswordBtn.setAttribute("title", "Show Password");
+        }
+    });
+}
+
 // Attach initial listeners
 const toggleLink = document.getElementById("auth-toggle-link");
 if (toggleLink) {
@@ -472,7 +579,7 @@ if (forgotLink) {
 // Auth Form Submission (Handles Login, Sign Up, Forgot Password, and Reset Password)
 document.getElementById("auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("auth-email").value.trim();
+    const rawIdentifier = document.getElementById("auth-email").value.trim();
     const password = document.getElementById("auth-password").value;
     const errorDiv = document.getElementById("auth-error-msg");
     const submitBtn = document.getElementById("auth-submit-btn");
@@ -482,8 +589,25 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
     
     if (authMode === "login") {
         submitBtn.innerText = "Logging in...";
+        let loginEmail = rawIdentifier;
+
+        // If user entered a username instead of an email (no '@')
+        if (!rawIdentifier.includes("@")) {
+            const usernameMap = getUsernameMap();
+            const lowerUser = rawIdentifier.toLowerCase();
+            if (usernameMap[lowerUser]) {
+                loginEmail = usernameMap[lowerUser];
+            } else {
+                errorDiv.innerText = "Username not recognized on this device. Please enter your email address to log in.";
+                errorDiv.style.display = "block";
+                submitBtn.innerText = "Log In";
+                submitBtn.disabled = false;
+                return;
+            }
+        }
+
         const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
+            email: loginEmail,
             password: password
         });
 
@@ -492,12 +616,23 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
             errorDiv.style.display = "block";
             submitBtn.innerText = "Log In";
             submitBtn.disabled = false;
+        } else {
+            if (data && data.user) {
+                saveUserToCache(data.user);
+                const metaUsername = data.user.user_metadata?.username;
+                if (metaUsername) {
+                    registerUsernameMapping(metaUsername, data.user.email);
+                }
+                if (!rawIdentifier.includes("@")) {
+                    registerUsernameMapping(rawIdentifier, data.user.email);
+                }
+            }
         }
     } else if (authMode === "signup") {
         submitBtn.innerText = "Creating account...";
         const username = document.getElementById("auth-username").value.trim();
         const { data, error } = await supabaseClient.auth.signUp({
-            email: email,
+            email: rawIdentifier,
             password: password,
             options: {
                 data: {
@@ -513,11 +648,15 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
             submitBtn.innerText = "Create Account";
             submitBtn.disabled = false;
         } else {
+            registerUsernameMapping(username, rawIdentifier);
+            if (data && data.user) {
+                saveUserToCache(data.user);
+            }
             showToast("Account created successfully! You are now logged in.");
         }
     } else if (authMode === "forgot_password") {
         submitBtn.innerText = "Sending link...";
-        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(rawIdentifier, {
             redirectTo: window.location.origin
         });
 
@@ -549,6 +688,7 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (user) {
                 currentUser = user;
+                saveUserToCache(user);
                 showAppScreen(user);
                 await loadUserData();
             } else {
@@ -563,7 +703,29 @@ document.getElementById("profile-logout-btn").addEventListener("click", async ()
     await supabaseClient.auth.signOut();
 });
 
-// Listen for Auth Changes
+// Instant Local-First Hydration (0ms Startup)
+function initLocalCache() {
+    try {
+        const cachedUserStr = localStorage.getItem("vault_cached_user");
+        if (cachedUserStr) {
+            currentUser = JSON.parse(cachedUserStr);
+            showAppScreen(currentUser);
+            
+            const cachedItems = getCachedItems(currentUser.id);
+            if (cachedItems && cachedItems.length > 0) {
+                entertainmentList = cachedItems;
+                render();
+            }
+        } else {
+            showAuthScreen();
+        }
+    } catch (e) {
+        console.error("Local cache hydration error:", e);
+    }
+}
+initLocalCache();
+
+// Listen for Auth Changes (Background Session Sync)
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
     console.log("Auth State Changed Event:", event);
     if (event === "PASSWORD_RECOVERY") {
@@ -577,9 +739,11 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
             return;
         }
         currentUser = session.user;
+        saveUserToCache(currentUser);
         showAppScreen(currentUser);
         await loadUserData();
     } else {
+        clearUserCache();
         currentUser = null;
         entertainmentList = [];
         showAuthScreen();
@@ -601,6 +765,7 @@ async function loadUserData() {
 
     if (data && data.length > 0) {
         entertainmentList = data;
+        saveItemsToCache(currentUser.id, entertainmentList);
         render();
     } else {
         const allowedEmails = [
@@ -632,11 +797,13 @@ async function loadUserData() {
                 console.error("Error inserting defaults:", insertError);
             } else {
                 entertainmentList = defaults;
+                saveItemsToCache(currentUser.id, entertainmentList);
                 render();
             }
         } else {
             console.log("Empty database for new account, starting from scratch.");
             entertainmentList = [];
+            saveItemsToCache(currentUser.id, entertainmentList);
             render();
         }
     }
@@ -714,8 +881,17 @@ async function loadNewsData() {
         return;
     }
     
-    isNewsLoading = true;
-    render();
+    // Check local storage cache for instant news display
+    const cachedNews = localStorage.getItem("vault_cached_news");
+    if (cachedNews) {
+        try {
+            newsList = JSON.parse(cachedNews);
+            render();
+        } catch (e) {}
+    } else {
+        isNewsLoading = true;
+        render();
+    }
     
     try {
         const polygonUrl = "https://api.rss2json.com/v1/api.json?rss_url=https://www.polygon.com/rss/gaming/index.xml";
@@ -741,7 +917,12 @@ async function loadNewsData() {
             return dateB - dateA;
         });
         
-        newsList = mergedItems;
+        if (mergedItems.length > 0) {
+            newsList = mergedItems;
+            try {
+                localStorage.setItem("vault_cached_news", JSON.stringify(newsList));
+            } catch (e) {}
+        }
         
     } catch (err) {
         console.error("Error fetching news feeds:", err);
@@ -1154,6 +1335,7 @@ document.getElementById("item-form").addEventListener("submit", async (e) => {
     submitBtn.disabled = false;
     submitBtn.innerText = "Save Item";
     modal.style.display = "none";
+    saveItemsToCache(currentUser.id, entertainmentList);
     render();
 });
 
@@ -1251,6 +1433,7 @@ fileInput.addEventListener("change", async (e) => {
                         alert("Error importing items: " + insertError.message);
                     } else {
                         entertainmentList = itemsToInsert;
+                        saveItemsToCache(currentUser.id, entertainmentList);
                         render();
                         alert("Import successful! All items written to cloud.");
                     }
@@ -1282,6 +1465,7 @@ fileInput.addEventListener("change", async (e) => {
                             alert("Error merging items: " + insertError.message);
                         } else {
                             entertainmentList.push(...itemsToInsert);
+                            saveItemsToCache(currentUser.id, entertainmentList);
                             render();
                             alert(`Merged ${itemsToInsert.length} new items into your database!`);
                         }
@@ -1591,6 +1775,8 @@ document.getElementById("profile-form").addEventListener("submit", async (e) => 
         showToast("Error updating profile: " + error.message, false);
     } else {
         currentUser = data.user;
+        registerUsernameMapping(newUsername, currentUser.email);
+        saveUserToCache(currentUser);
         updateUserProfileUI(currentUser);
         uploadedAvatarBase64 = ""; // Reset
         profileDrawer.classList.remove("open");
@@ -1661,6 +1847,7 @@ if (deleteConfirmBtn) {
             showToast("Error deleting item: " + error.message, false);
         } else {
             entertainmentList = entertainmentList.filter(item => item.id !== itemToDeleteId);
+            saveItemsToCache(currentUser.id, entertainmentList);
             itemToDeleteId = null;
             render();
             showToast("Item deleted successfully.");
