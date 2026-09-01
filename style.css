@@ -595,6 +595,19 @@ footer {
 }
 
 /* Auth Screen Styles */
+html.auth-logged-in #app-container {
+    display: block;
+}
+html.auth-logged-in #auth-container {
+    display: none !important;
+}
+html.auth-logged-out #app-container {
+    display: none !important;
+}
+html.auth-logged-out #auth-container {
+    display: flex;
+}
+
 .auth-container {
     display: flex;
     justify-content: center;

@@ -11,27 +11,26 @@
     <link rel="dns-prefetch" href="https://jyjpobfgdwvbyltkvlmu.supabase.co">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=16">
+    <link rel="stylesheet" href="style.css?v=17">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
-</head>
-<body>
-    <div class="background-glow"></div>
-
     <!-- Instant Zero-Latency Screen Resolver -->
     <script>
         (function() {
             try {
                 var cached = localStorage.getItem("vault_cached_user");
                 if (cached) {
-                    document.write('<style>#app-container{display:block!important}#auth-container{display:none!important}</style>');
+                    document.documentElement.classList.add("auth-logged-in");
                 } else {
-                    document.write('<style>#auth-container{display:flex!important}#app-container{display:none!important}</style>');
+                    document.documentElement.classList.add("auth-logged-out");
                 }
             } catch(e) {}
         })();
     </script>
+</head>
+<body>
+    <div class="background-glow"></div>
     
-    <div id="app-container" style="display: none;">
+    <div id="app-container">
         <header>
             <div class="container">
                 <div class="logo">
@@ -326,7 +325,7 @@
     </div>
 
     <!-- Glassmorphic Login/Auth Screen -->
-    <div id="auth-container" class="auth-container" style="display: none;">
+    <div id="auth-container" class="auth-container">
         <div class="auth-card">
             <div class="logo">
                 <h1>GAME-ANIME <span>VAULT</span></h1>
@@ -387,6 +386,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=21"></script>
+    <script src="app.js?v=22"></script>
 </body>
 </html>

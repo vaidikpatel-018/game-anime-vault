@@ -384,16 +384,26 @@ function registerUsernameMapping(username, email) {
 
 // Auth Screen Toggling
 function showAuthScreen() {
-    document.getElementById("app-container").style.display = "none";
-    document.getElementById("auth-container").style.display = "flex";
-    document.getElementById("auth-error-msg").style.display = "none";
-    document.getElementById("auth-form").reset();
+    document.documentElement.classList.remove("auth-logged-in");
+    document.documentElement.classList.add("auth-logged-out");
+    const appContainer = document.getElementById("app-container");
+    const authContainer = document.getElementById("auth-container");
+    if (appContainer) appContainer.style.display = "none";
+    if (authContainer) authContainer.style.display = "flex";
+    const authError = document.getElementById("auth-error-msg");
+    if (authError) authError.style.display = "none";
+    const authForm = document.getElementById("auth-form");
+    if (authForm) authForm.reset();
     setAuthMode("login");
 }
 
 function showAppScreen(user) {
-    document.getElementById("auth-container").style.display = "none";
-    document.getElementById("app-container").style.display = "block";
+    document.documentElement.classList.remove("auth-logged-out");
+    document.documentElement.classList.add("auth-logged-in");
+    const appContainer = document.getElementById("app-container");
+    const authContainer = document.getElementById("auth-container");
+    if (authContainer) authContainer.style.display = "none";
+    if (appContainer) appContainer.style.display = "block";
     updateUserProfileUI(user);
     applyThemeForTab(currentTab);
 }
@@ -617,15 +627,27 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
             submitBtn.innerText = "Log In";
             submitBtn.disabled = false;
         } else {
+            submitBtn.innerText = "Log In";
+            submitBtn.disabled = false;
             if (data && data.user) {
-                saveUserToCache(data.user);
-                const metaUsername = data.user.user_metadata?.username;
+                currentUser = data.user;
+                saveUserToCache(currentUser);
+                const metaUsername = currentUser.user_metadata?.username;
                 if (metaUsername) {
-                    registerUsernameMapping(metaUsername, data.user.email);
+                    registerUsernameMapping(metaUsername, currentUser.email);
                 }
                 if (!rawIdentifier.includes("@")) {
-                    registerUsernameMapping(rawIdentifier, data.user.email);
+                    registerUsernameMapping(rawIdentifier, currentUser.email);
                 }
+                
+                // Immediately render cached items and show dashboard without waiting or needing reload
+                const cachedItems = getCachedItems(currentUser.id);
+                if (cachedItems && cachedItems.length > 0) {
+                    entertainmentList = cachedItems;
+                    render();
+                }
+                showAppScreen(currentUser);
+                loadUserData();
             }
         }
     } else if (authMode === "signup") {
@@ -648,9 +670,14 @@ document.getElementById("auth-form").addEventListener("submit", async (e) => {
             submitBtn.innerText = "Create Account";
             submitBtn.disabled = false;
         } else {
+            submitBtn.innerText = "Create Account";
+            submitBtn.disabled = false;
             registerUsernameMapping(username, rawIdentifier);
             if (data && data.user) {
-                saveUserToCache(data.user);
+                currentUser = data.user;
+                saveUserToCache(currentUser);
+                showAppScreen(currentUser);
+                loadUserData();
             }
             showToast("Account created successfully! You are now logged in.");
         }
